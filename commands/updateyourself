@@ -18,6 +18,7 @@ make
 
 # reboot cbot in background
 at now << EOF
+sleep 1
 sudo stop cbot || true && sleep 2 && cp /home/maxi/cbot/cbot/bin/linux-386/cbot /usr/local/bin/cbot && sudo start cbot
 EOF
 
