@@ -14,5 +14,10 @@ git checkout $branch --quiet
 # update to state of remote branch
 git reset --hard origin/$branch --quiet 
 
-# reboot cbot
-sudo stop cbot && sleep 2 && sudo start cbot
+make
+cp bin/linux-386/cbot /usr/local/bin/cbot
+
+echo "Updated myself!"
+
+# reboot cbot in background
+sudo stop cbot && sleep 2 && sudo start cbot &
