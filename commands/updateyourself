@@ -19,5 +19,7 @@ make
 echo "Updated myself! (Wait a few seconds just in case)"
 
 # reboot cbot in background
-bash -i -c "nohup sudo stop cbot || true && sleep 2 && cp /home/maxi/cbot/cbot/bin/linux-386/cbot /usr/local/bin/cbot && sudo start cbot &"
-sleep 2
+at now << EOF
+sudo stop cbot || true && sleep 2 && cp /home/maxi/cbot/cbot/bin/linux-386/cbot /usr/local/bin/cbot && sudo start cbot
+EOF
+sleep 3
