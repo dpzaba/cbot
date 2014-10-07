@@ -1,5 +1,5 @@
-#!/usr/bin/env ruby
-
+#!/home/maxi/.rvm/rubies/ruby-2.0.0-p247/bin/ruby
+#
 # Borrowed from: https://raw.githubusercontent.com/OtpChatBot/Ybot/master/plugins/decide.rb
 #
 # Ybot decision helper plugin
