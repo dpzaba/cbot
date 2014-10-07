@@ -1,0 +1,14 @@
+#!/usr/bin/env bash
+set -o errexit
+
+if [ "$#" -ne 1 ]; then
+  echo "Please provide <branch>"
+  exit 1
+fi
+
+# assign variables from args
+branch=$1
+
+echo "QA team is so lazy that we have a special command for them"
+echo "cbot $1"
+# echo "cbot deploy rails staging-us $1"
