@@ -1,0 +1,18 @@
+#!/usr/bin/env bash
+set -o errexit
+
+# cbot repo
+dir=/home/maxi/cbot/cbot
+branch="master"
+
+cd $dir
+
+# fetch any new branches
+git fetch --all --quiet
+# switch to branch
+git checkout $branch --quiet 
+# update to state of remote branch
+git reset --hard origin/$branch --quiet 
+
+# reboot cbot
+sudo stop cbot && sleep 2 && sudo start cbot
