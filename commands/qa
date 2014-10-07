@@ -10,5 +10,5 @@ fi
 branch=$1
 
 echo "QA team is so lazy that we have a special command for them"
-echo "cbot $1"
-# echo "cbot deploy rails staging-us $1"
+echo "cbot $branch"
+echo "cbot deploy rails staging-us $branch"
