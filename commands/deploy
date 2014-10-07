@@ -1,0 +1,71 @@
+#!/usr/bin/env bash
+set -o errexit
+
+if [ "$#" -ne 3 ]; then
+  echo "Please provide <app> <environment> <branch>"
+  exit 1
+fi
+
+app=$1
+appEnv=$2
+branch=$3
+
+# establish project directory from $app variable
+dir=""
+if [ "$app" == "rails" ]; then
+  dir=/home/maxi/workspace/cabify_server
+else
+  if [ "$app" == "node" ]; then
+    dir=/home/maxi/workspace/cabify_server_node
+  fi;
+fi;
+# assert there's a app directory
+if [ "$dir" == "" ]; then
+  echo "Unknown app $app. Use 'rails' or 'node'"
+  exit 1
+fi;
+
+# assert there's an environment
+if [ "$appEnv" == "" ]; then
+  echo "Please provide an environment"
+  exit 1
+fi;
+
+# assert environment is not production
+if [ "$appEnv" == "production-us" ]; then
+  echo "Whoooa! Cannot deploy to $appEnv... yet"
+  exit 1
+fi;
+
+# cd into project
+cd $dir
+
+# Load RVM into a shell session *as a function*
+if [[ -s "$HOME/.rvm/scripts/rvm" ]] ; then
+  # First try to load from a user install
+  source "$HOME/.rvm/scripts/rvm"
+else
+  printf "ERROR: An RVM installation was not found.\n"
+  exit 1
+fi
+
+# assert that git is clean
+dirty="$(git status --porcelain)"
+if [ -n "$dirty" ]; then
+  echo "Dirty git directory $(pwd):"
+  echo $dirty
+  exit 1
+fi;
+
+# fetch any new branches
+git fetch --all
+# switch to branch
+git checkout $branch
+# update to state of remote branch
+git reset --hard origin/$branch
+
+# install any dependencies
+bundle check || bundle install
+
+# deploy
+bundle exec cap $appEnv deploy
