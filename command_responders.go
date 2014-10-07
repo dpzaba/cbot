@@ -34,12 +34,15 @@ func InitExecutableCommands(dir string, prefix string, outputHandler func(e Even
 				}
 				cmd := exec.Command(exePath, args...)
 				output, err := cmd.CombinedOutput()
+				s := string(output)
 				if err != nil {
-					outputHandler(e, fmt.Sprintf("Error: %s %s", err, output))
-					return fmt.Errorf("%s %v %s. %s", exePath, args, err, output)
+					if len(s) > 0 {
+						outputHandler(e, s)
+					}
+					return fmt.Errorf("%s %v %s. %s", exePath, args, err, s)
 				}
-				log.Printf("<%s> %s %v: %s", e.User, name, args, string(output))
-				return outputHandler(e, string(output))
+				log.Printf("<%s> %s %v: %s", e.User, name, args, s)
+				return outputHandler(e, s)
 			},
 		}
 		fmt.Printf("Registered <%s %s> command\n", prefix, name)
