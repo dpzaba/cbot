@@ -21,10 +21,10 @@ echo "" >> $logFile
 # establish project directory from $app variable
 dir=""
 if [ "$app" == "rails" ]; then
-  dir=/home/maxi/workspace/cabify_server
+  dir=/home/maxi/cbot/cabify_server
 else
   if [ "$app" == "node" ]; then
-    dir=/home/maxi/workspace/cabify_server_node
+    dir=/home/maxi/cbot/cabify_server_node
   fi;
 fi;
 # assert there's a app directory
