@@ -19,4 +19,5 @@ make
 echo "Updated myself! (Wait a few seconds just in case)"
 
 # reboot cbot in background
-setsid sudo stop cbot || true && sleep 2 && cp /home/maxi/cbot/cbot/bin/linux-386/cbot /usr/local/bin/cbot && sudo start cbot &
+(setsid sudo stop cbot || true && sleep 2 && cp /home/maxi/cbot/cbot/bin/linux-386/cbot /usr/local/bin/cbot && sudo start cbot) &
+sleep 10
