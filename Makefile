@@ -13,9 +13,9 @@ default: build
 
 build:
 	$(GODEP)
-	GOARCH=amd64 GOOS=linux $(GOBUILD) -a -o bin/linux-amd64/$(BIN)
+#	GOARCH=amd64 GOOS=linux $(GOBUILD) -a -o bin/linux-amd64/$(BIN)
 	GOARCH=386 GOOS=linux $(GOBUILD) -a -o bin/linux-386/$(BIN)
-	GOARCH=amd64 GOOS=darwin $(GOBUILD) -a -o bin/darwin-amd64/$(BIN)
+#	GOARCH=amd64 GOOS=darwin $(GOBUILD) -a -o bin/darwin-amd64/$(BIN)
 
 format:
 	$(GOFMT) ./**/*.go

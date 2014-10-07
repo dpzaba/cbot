@@ -29,13 +29,14 @@ func InitExecutableCommands(dir string, prefix string, outputHandler func(e Even
 			Prefix: prefix,
 			Name:   name,
 			Run: func(e Event, content string, args []string) error {
-				if err := outputHandler(e, fmt.Sprintf("Starting %s %v", f.Name(), args)); err != nil {
+				if err := outputHandler(e, fmt.Sprintf("Starting %s %v", name, args)); err != nil {
 					return err
 				}
 				cmd := exec.Command(exePath, args...)
 				output, err := cmd.CombinedOutput()
 				if err != nil {
-					return err
+					outputHandler(e, fmt.Sprintf("Error: %s %s", err, output))
+					return fmt.Errorf("%s %v %s. %s", exePath, args, err, output)
 				}
 				log.Printf("<%s> %s %v: %s", e.User, name, args, string(output))
 				return outputHandler(e, string(output))

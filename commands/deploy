@@ -6,9 +6,11 @@ if [ "$#" -ne 3 ]; then
   exit 1
 fi
 
+# assign variables from args
 app=$1
 appEnv=$2
 branch=$3
+
 logFile="/var/log/cbot/${app}_${appEnv}_${branch}.log"
 
 # save all output to logfile
@@ -48,10 +50,11 @@ cd $dir
 
 # Load RVM into a shell session *as a function*
 if [[ -s "$HOME/.rvm/scripts/rvm" ]] ; then
-  # First try to load from a user install
+  set +o errexit
   source "$HOME/.rvm/scripts/rvm"
+  set -o errexit
 else
-  printf "ERROR: An RVM installation was not found.\n"
+  echo "ERROR: An RVM installation was not found"
   exit 1
 fi
 
@@ -63,13 +66,12 @@ if [ -n "$dirty" ]; then
   exit 1
 fi;
 
-
 # fetch any new branches
-git fetch --all > /dev/null
+git fetch --all --quiet
 # switch to branch
-git checkout $branch > /dev/null
+git checkout $branch --quiet 
 # update to state of remote branch
-git reset --hard origin/$branch > /dev/null
+git reset --hard origin/$branch --quiet 
 
 # install any dependencies
 bundle check > /dev/null || bundle install > /dev/null
@@ -83,9 +85,11 @@ set +o errexit
 deploy=$(bundle exec cap $appEnv deploy 2>&1 | tee -a $logFile; exit ${PIPESTATUS[0]})
 deployStatus=$?
 
+echo "Log saved to: $logFile"
+
 if [ $deployStatus -ne 0 ]; then
-  echo "Error deploying. See $logFile"
+  echo "Error deploying"
   exit 1
 fi;
 
-echo "Deployed $app app to $appEnv on branch $branch. Log saved to $logFile"
+echo "Deployed $app app to $appEnv on branch $branch"

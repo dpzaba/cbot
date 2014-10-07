@@ -38,7 +38,18 @@ func main() {
 	if err != nil {
 		log.Fatal(err)
 	}
-	startStream(c, responders.handleEvent, strings.Split(*flows, ",")...)
+	rooms := strings.Split(*flows, ",")
+	/*
+		for _, f := range rooms {
+			c.Message(Message{
+				Event:    "message",
+				Content:  fmt.Sprintf("%s has become self-aware", *prefix),
+				Flow:     f,
+				UserName: *prefix,
+			})
+		}
+	*/
+	startStream(c, responders.handleEvent, rooms...)
 }
 
 type Responders []Responder
