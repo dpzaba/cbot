@@ -9,6 +9,12 @@ fi
 app=$1
 appEnv=$2
 branch=$3
+logFile="/var/log/cbot/${app}_${appEnv}_${branch}.log"
+
+# save all output to logfile
+echo "################## $app $appEnv $branch" >> $logFile
+date >> $logFile
+echo "" >> $logFile
 
 # establish project directory from $app variable
 dir=""
@@ -57,15 +63,29 @@ if [ -n "$dirty" ]; then
   exit 1
 fi;
 
+
 # fetch any new branches
-git fetch --all
+git fetch --all > /dev/null
 # switch to branch
-git checkout $branch
+git checkout $branch > /dev/null
 # update to state of remote branch
-git reset --hard origin/$branch
+git reset --hard origin/$branch > /dev/null
 
 # install any dependencies
-bundle check || bundle install
+bundle check > /dev/null || bundle install > /dev/null
 
-# deploy
-bundle exec cap $appEnv deploy
+## deploy
+
+# do not exit if deploy command fails
+set +o errexit
+# return exit code of first command
+# http://stackoverflow.com/questions/1221833/bash-pipe-output-and-capture-exit-status
+deploy=$(bundle exec cap $appEnv deploy 2>&1 | tee -a $logFile; exit ${PIPESTATUS[0]})
+deployStatus=$?
+
+if [ $deployStatus -ne 0 ]; then
+  echo "Error deploying. See $logFile"
+  exit 1
+fi;
+
+echo "Deployed $app app to $appEnv on branch $branch. Log saved to $logFile"
