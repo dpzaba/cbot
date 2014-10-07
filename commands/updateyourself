@@ -15,9 +15,8 @@ git checkout $branch --quiet
 git reset --hard origin/$branch --quiet 
 
 make
-cp bin/linux-386/cbot /usr/local/bin/cbot
 
 echo "Updated myself!"
 
 # reboot cbot in background
-sudo stop cbot && sleep 2 && sudo start cbot &
+sudo stop cbot && sleep 2 && cp bin/linux-386/cbot /usr/local/bin/cbot sudo start cbot &
