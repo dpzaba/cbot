@@ -29,10 +29,11 @@ func InitExecutableCommands(dir string, prefix string, outputHandler func(e Even
 			Prefix: prefix,
 			Name:   name,
 			Run: func(e Event, content string, args []string) error {
-				if err := outputHandler(e, fmt.Sprintf("Starting %s %v", name, args)); err != nil {
+				if err := outputHandler(e, fmt.Sprintf("Starting %s %s", name, strings.Join(args, " "))); err != nil {
 					return err
 				}
 				cmd := exec.Command(exePath, args...)
+				cmd.Dir = absDir
 				output, err := cmd.CombinedOutput()
 				s := string(output)
 				if err != nil {
