@@ -19,4 +19,4 @@ make
 echo "Updated myself!"
 
 # reboot cbot in background
-sudo stop cbot; sleep 2; cp bin/linux-386/cbot /usr/local/bin/cbot && sudo start cbot &
+sudo stop cbot || true && sleep 2 && cp bin/linux-386/cbot /usr/local/bin/cbot && sudo start cbot &
