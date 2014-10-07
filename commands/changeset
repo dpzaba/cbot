@@ -1,0 +1,36 @@
+#!/usr/bin/env bash
+
+set -o errexit
+
+if [ "$#" -ne 1 ]; then
+  echo "Please provide <app>"
+  exit 1
+fi
+
+# assign variables from args
+app=$1
+
+# establish project name from $app variable
+name=""
+if [ "$app" == "rails" ]; then
+  name=cabify_server
+else
+  if [ "$app" == "node" ]; then
+    name=cabify_server_node
+  fi;
+fi;
+# assert there's a app directory
+if [ "$name" == "" ]; then
+  echo "Unknown app $app. Use 'rails' or 'node'"
+  exit 1
+fi;
+
+# cd into project
+cd "/home/maxi/cbot/$name"
+
+git fetch --all --quiet
+tag1="$(git tag --list production-us-* | tail -2 | head -1)"
+tag2="$(git tag --list production-us-* | tail -1)"
+url="https://github.com/MaxiMobility/cabify_server/compare/$tag1...$tag2"
+
+echo "This is new on production: $url"
