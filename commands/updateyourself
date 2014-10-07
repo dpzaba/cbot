@@ -16,7 +16,7 @@ git reset --hard origin/$branch --quiet
 
 make
 
-echo "Updated myself!"
+echo "Updated myself! (Wait a few seconds just in case)"
 
 # reboot cbot in background
-sudo stop cbot || true && sleep 2 && cp /home/maxi/cbot/cbot/bin/linux-386/cbot /usr/local/bin/cbot && sudo start cbot &
+setsid (sudo stop cbot || true && sleep 2 && cp /home/maxi/cbot/cbot/bin/linux-386/cbot /usr/local/bin/cbot && sudo start cbot) 
