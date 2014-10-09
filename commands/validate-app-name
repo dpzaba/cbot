@@ -1,3 +1,9 @@
 #!/home/maxi/.rvm/rubies/ruby-2.0.0-p247/bin/ruby
 
-%w[cabify_server cabify_server_node].include?(ARGV.first) || exit(1)
+app_name = ARGV.first
+valid_app_names = %w[cabify_server cabify_server_node]
+
+unless valid_app_names.include?(app_name)
+  puts "Invalid app name #{app_name}. Valid app names are #{valid_app_names.join(", ")}"
+  exit(1)
+end
