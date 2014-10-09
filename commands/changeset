@@ -2,7 +2,10 @@
 
 set -o errexit
 
-cd "$(./app-directory $1)"
+app=$1
+./validate-app-name $app
+
+cd "/home/maxi/cbot/$app"
 
 git fetch --all --quiet
 tag1="$(git tag --list production-us-* | tail -2 | head -1)"

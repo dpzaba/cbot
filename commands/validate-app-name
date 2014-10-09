@@ -1,0 +1,3 @@
+#!/usr/bin/env ruby
+
+%w[cabify_server cabify_server_node].include?(ARGV.first) || exit(1)
