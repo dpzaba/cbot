@@ -10,4 +10,4 @@ fi
 branch=$1
 
 echo "QA team is so lazy that we have a special command for them"
-./deploy rails staging-us $branch
+./deploy cabify_server staging-us $branch

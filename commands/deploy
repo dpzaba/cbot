@@ -7,7 +7,7 @@ if [ "$#" -ne 3 ]; then
 fi
 
 # assign variables from args
-app=$1
+app=$(./normalize-app-name $1)
 appEnv=$2
 branch=$3
 
@@ -17,21 +17,6 @@ logFile="/var/log/cbot/${app}_${appEnv}_${branch}.log"
 echo "################## $app $appEnv $branch" >> $logFile
 date >> $logFile
 echo "" >> $logFile
-
-# establish project directory from $app variable
-dir=""
-if [ "$app" == "rails" ]; then
-  dir=/home/maxi/cbot/cabify_server
-else
-  if [ "$app" == "node" ]; then
-    dir=/home/maxi/cbot/cabify_server_node
-  fi;
-fi;
-# assert there's a app directory
-if [ "$dir" == "" ]; then
-  echo "Unknown app $app. Use 'rails' or 'node'"
-  exit 1
-fi;
 
 # assert there's an environment
 if [ "$appEnv" == "" ]; then
@@ -46,7 +31,7 @@ if [ "$appEnv" == "production-us" ]; then
 fi;
 
 # cd into project
-cd $dir
+cd "/home/maxi/cbot/$app"
 
 # Load RVM into a shell session *as a function*
 if [[ -s "$HOME/.rvm/scripts/rvm" ]] ; then
