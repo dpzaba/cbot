@@ -9,5 +9,5 @@ fi
 # assign variables from args
 branch=$1
 
-echo "QA team is so lazy that we have a special command for them"
+#echo "QA team is so lazy that we have a special command for them"
 ./deploy cabify_server staging-us $branch
