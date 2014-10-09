@@ -2,7 +2,7 @@
 
 set -o errexit
 
-app=$(normalize-app-name $1)
+app=$(./normalize-app-name $1)
 
 cd "/home/maxi/cbot/$app"
 
