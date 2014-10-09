@@ -8,12 +8,12 @@ APP_NAMES = {
   "cabify_server_node" => "cabify_server_node"
 }
 
-VALID_APP_NAMES = APP_NAMES.keys.compact.sort.uniq
+VALID_APP_NAMES = APP_NAMES.keys.compact.uniq
 
 app_name = APP_NAMES.fetch(ARGV.first, ARGV.first)
 
 unless VALID_APP_NAMES.include?(app_name)
-  puts "Invalid app name #{app_name.inspect}. Valid app names are #{VALID_APP_NAMES.join(", ")}"
+  $stderr.puts "Invalid app name #{app_name.inspect}. Valid app names are #{VALID_APP_NAMES.join(", ")}"
   exit(1)
 end
 
