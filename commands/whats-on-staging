@@ -2,8 +2,7 @@
 
 set -o errexit
 
-app=$1
-./validate-app-name $app
+app=$(normalize-app-name $1)
 
 cd "/home/maxi/cbot/$app"
 
