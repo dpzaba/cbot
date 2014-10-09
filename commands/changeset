@@ -2,7 +2,7 @@
 
 set -o errexit
 
-./go-to-directory $1
+./go-to-app-directory $1
 
 git fetch --all --quiet
 tag1="$(git tag --list production-us-* | tail -2 | head -1)"
