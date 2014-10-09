@@ -51,6 +51,7 @@ if [ -n "$dirty" ]; then
   exit 1
 fi;
 
+# assert that the branch exists
 if ! git ls-remote --heads --exit-code origin $branch > /dev/null; then
   echo "Branch $branch not found"
   exit 1
@@ -75,14 +76,15 @@ set +o errexit
 # run cap, saving output to logfile
 # return exit code of first command
 # http://stackoverflow.com/questions/1221833/bash-pipe-output-and-capture-exit-status
+startDeploy=$(date +%s)
 deploy=$(bundle exec cap $appEnv deploy 2>&1 | tee -a $logFile; exit ${PIPESTATUS[0]})
 deployStatus=$?
-
-echo "Log saved to: $logFile"
+endDeploy=$(date +%s)
 
 if [ $deployStatus -ne 0 ]; then
   echo "Error deploying, see $logFile"
   exit 1
 fi;
 
-echo "Deployed $app app to $appEnv on branch $branch"
+deployTime=$((endDeploy-startDeploy))
+echo "Deployed $app app to $appEnv on branch $branch in $deployTime s"
