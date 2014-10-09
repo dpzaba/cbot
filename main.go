@@ -39,23 +39,13 @@ func main() {
 		log.Fatal(err)
 	}
 	rooms := strings.Split(*flows, ",")
-	/*
-		for _, f := range rooms {
-			c.Message(Message{
-				Event:    "message",
-				Content:  fmt.Sprintf("%s has become self-aware", *prefix),
-				Flow:     f,
-				UserName: *prefix,
-			})
-		}
-	*/
 	startStream(c, responders.handleEvent, rooms...)
 }
 
 type Responders []Responder
 
 type Responder interface {
-	Handle(event Event, content string, args []string) error
+	Handle(event Event, content string, args []string)
 }
 
 var spaceSplitter *regexp.Regexp = regexp.MustCompile("\\s+")
@@ -68,9 +58,7 @@ func (r *Responders) handleMessage(event Event) error {
 	cleaned := strings.ToLower(strings.TrimSpace(content))
 	args := spaceSplitter.Split(cleaned, -1)
 	for _, responder := range *r {
-		if err := responder.Handle(event, content, args); err != nil {
-			return err
-		}
+		go responder.Handle(event, content, args)
 	}
 	return nil
 }
@@ -82,7 +70,9 @@ func (r *Responders) handleEvent(msg []byte) error {
 	}
 	switch event.Event {
 	case "message": // normal message (not threaded)
-		return r.handleMessage(event)
+		if err := r.handleMessage(event); err != nil {
+			return err
+		}
 	}
 	return nil
 }
@@ -110,7 +100,7 @@ func startStream(client *Client, handler func(msg []byte) error, flows ...string
 				go startStream(client, handler, flows...)
 				return
 			}
-			if err = handler(msg); err != nil {
+			if err := handler(msg); err != nil {
 				log.Printf("Handler error: %v", err)
 			}
 			//fmt.Println(string(msg))

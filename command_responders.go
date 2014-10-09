@@ -1,6 +1,7 @@
 package main
 
 import (
+	"bufio"
 	"fmt"
 	"io/ioutil"
 	"log"
@@ -29,21 +30,21 @@ func InitExecutableCommands(dir string, prefix string, outputHandler func(e Even
 			Prefix: prefix,
 			Name:   name,
 			Run: func(e Event, content string, args []string) error {
-				if err := outputHandler(e, fmt.Sprintf("Starting %s %s", name, strings.Join(args, " "))); err != nil {
-					return err
-				}
 				cmd := exec.Command(exePath, args...)
 				cmd.Dir = absDir
-				output, err := cmd.CombinedOutput()
-				s := string(output)
+				output, err := outputChan(cmd)
 				if err != nil {
-					if len(s) > 0 {
-						outputHandler(e, s)
-					}
-					return fmt.Errorf("%s %v %s. %s", exePath, args, err, s)
+					outputHandler(e, fmt.Sprintf("Error running command: %s", err))
+					return err
 				}
-				log.Printf("<%s> %s %v: %s", e.User, name, args, s)
-				return outputHandler(e, s)
+				for o := range output {
+					if len(o) > 0 {
+						if err := outputHandler(e, o); err != nil {
+							return err
+						}
+					}
+				}
+				return nil
 			},
 		}
 		fmt.Printf("Registered <%s %s> command\n", prefix, name)
@@ -52,15 +53,51 @@ func InitExecutableCommands(dir string, prefix string, outputHandler func(e Even
 	return responders, nil
 }
 
+// runs command, returning stdout and stderr on chan
+func outputChan(cmd *exec.Cmd) (<-chan string, error) {
+	stdout, err := cmd.StdoutPipe()
+	if err != nil {
+		return nil, err
+	}
+	stderr, err := cmd.StderrPipe()
+	if err != nil {
+		return nil, err
+	}
+	output := make(chan string, 1)
+	outScanner := bufio.NewScanner(stdout)
+	errScanner := bufio.NewScanner(stderr)
+	if err := cmd.Start(); err != nil {
+		return nil, err
+	}
+	go func() {
+		for outScanner.Scan() {
+			output <- outScanner.Text()
+		}
+	}()
+	go func() {
+		for errScanner.Scan() {
+			output <- fmt.Sprintf("err: %s", errScanner.Text())
+		}
+	}()
+	go func() {
+		defer close(output)
+		if err := cmd.Wait(); err != nil {
+			log.Printf("Error on cmd.Wait: %v", err)
+		}
+	}()
+	return output, nil
+}
+
 type MessageCommandResponder struct {
 	Prefix string
 	Name   string
 	Run    func(event Event, content string, args []string) error
 }
 
-func (m *MessageCommandResponder) Handle(event Event, content string, args []string) error {
+func (m *MessageCommandResponder) Handle(event Event, content string, args []string) {
 	if len(args) >= 2 && args[0] == m.Prefix && args[1] == m.Name {
-		return m.Run(event, content, args[2:])
+		if err := m.Run(event, content, args[2:]); err != nil {
+			log.Println(err)
+		}
 	}
-	return nil
 }
