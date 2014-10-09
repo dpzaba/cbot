@@ -2,7 +2,7 @@
 
 set -o errexit
 
-./go-to-app-directory $1
+cd "$(./app-directory $1)"
 
 current_branch="$(git rev-parse --abbrev-ref HEAD)"
 

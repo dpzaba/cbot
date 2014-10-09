@@ -25,5 +25,5 @@ if [ "$name" == "" ]; then
   exit 1
 fi;
 
-# cd into project
-cd "/home/maxi/cbot/$name"
+# return project directory
+echo "/home/maxi/cbot/$name"
