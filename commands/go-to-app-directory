@@ -27,7 +27,3 @@ fi;
 
 # cd into project
 cd "/home/maxi/cbot/$name"
-
-current_branch="$(git rev-parse --abbrev-ref HEAD)"
-
-echo "The current branch on test.cabify.com is $current_branch"
