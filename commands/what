@@ -28,5 +28,5 @@ when "day is it?", "day is it today?"
 when %r{is on staging( on (?<app_name>\w+))?\?}
   puts `./whats-on-staging #{$~[:app_name]}`
 else
-  puts "what do you want from me?"
+  puts "I don't know, my creators didn't teach me :("
 end
