@@ -23,7 +23,7 @@ def what_day_is_it_today?
 end
 
 case ARGV.join(" ").downcase
-when "is the answer to the ultimate question of life, the universe, and everything"
+when "is the answer to the ultimate question of life, the universe, and everything?"
   puts "42"
 when "day is it?", "day is it today?"
   what_day_is_it_today?
