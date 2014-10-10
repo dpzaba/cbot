@@ -1,0 +1,32 @@
+#!/home/maxi/.rvm/rubies/ruby-2.0.0-p247/bin/ruby
+
+require 'net/http'
+require 'json'
+
+def what_day_is_it_today?
+  wday = Time.now.wday
+  if wday == 5
+    uri = URI('https://ajax.googleapis.com/ajax/services/search/images')
+    uri.query = URI.encode_www_form(v: "1.0", q: "it's friday")
+    res = Net::HTTP.get_response(uri)
+
+    # get url
+    result = JSON.parse(res.body)
+
+    # return url
+    puts "It is Friday!"
+    puts result["responseData"]["results"].sample["url"]
+  else
+    wdays = %w[Sunday Monday Tuesday Wednesday Thursday Friday Saturday]
+    puts "It is #{wdays[wday]} :("
+  end
+end
+
+case ARGV.join(" ")
+when "day is it?", "day is it today?"
+  what_day_is_it_today?
+when %r{is on staging( on (?<app_name>\w+))?\?}
+  `./whats-on-staging #{$~[:app_name]}`
+else
+  puts "what do you want from me?"
+end
