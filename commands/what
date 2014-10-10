@@ -22,7 +22,9 @@ def what_day_is_it_today?
   end
 end
 
-case ARGV.join(" ")
+case ARGV.join(" ").downcase
+when "is the answer to the ultimate question of life, the universe, and everything"
+  puts "42"
 when "day is it?", "day is it today?"
   what_day_is_it_today?
 when %r{is on staging( on (?<app_name>\w+))?\?}
