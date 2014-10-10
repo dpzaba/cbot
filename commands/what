@@ -7,7 +7,7 @@ def what_day_is_it_today?
   wday = Time.now.wday
   if wday == 5
     uri = URI('https://ajax.googleapis.com/ajax/services/search/images')
-    uri.query = URI.encode_www_form(v: "1.0", q: "it's friday")
+    uri.query = URI.encode_www_form(v: "1.0", safe: "active", rsz: "8", q: "it's friday")
     res = Net::HTTP.get_response(uri)
 
     # get url
