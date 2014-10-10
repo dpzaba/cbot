@@ -1,4 +1,4 @@
-#!/home/maxi/.rvm/rubies/ruby-2.0.0-p247/bin/ruby
+#!/usr/bin/env ruby
 #
 # Borrowed from: https://raw.githubusercontent.com/OtpChatBot/Ybot/master/plugins/wat.rb
 #

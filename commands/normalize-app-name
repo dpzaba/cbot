@@ -1,4 +1,4 @@
-#!/home/maxi/.rvm/rubies/ruby-2.0.0-p247/bin/ruby
+#!/usr/bin/env ruby
 
 APP_NAMES = {
   nil                  => "cabify_server",
