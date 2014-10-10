@@ -26,7 +26,7 @@ case ARGV.join(" ")
 when "day is it?", "day is it today?"
   what_day_is_it_today?
 when %r{is on staging( on (?<app_name>\w+))?\?}
-  `./whats-on-staging #{$~[:app_name]}`
+  puts `./whats-on-staging #{$~[:app_name]}`
 else
   puts "what do you want from me?"
 end
