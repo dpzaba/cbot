@@ -1,15 +1,25 @@
 package main
 
 import (
-	"bufio"
-	"fmt"
-	"io/ioutil"
-	"log"
 	"os/exec"
-	"path/filepath"
-	"strings"
+
+	"bitbucket.org/cabify/cbot/flowdock"
 )
 
+type CommandMessageResponder struct {
+	Name string
+	Cmd  *exec.Cmd
+}
+
+func (c *CommandMessageResponder) Handles(e flowdock.Event, args []string) bool {
+	return len(args) > 0 && args[0] == c.Name
+}
+
+func (c *CommandMessageResponder) Handle(e flowdock.Event, args []string) {
+
+}
+
+/*
 func InitExecutableCommands(dir string, prefix string, outputHandler func(e Event, output string) error) (Responders, error) {
 	absDir, err := filepath.Abs(dir)
 	if err != nil {
@@ -101,3 +111,4 @@ func (m *MessageCommandResponder) Handle(event Event, content string, args []str
 		}
 	}
 }
+*/

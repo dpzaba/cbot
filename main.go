@@ -1,12 +1,12 @@
 package main
 
 import (
-	"encoding/json"
 	"flag"
 	"log"
-	"regexp"
 	"strings"
 	"time"
+
+	"bitbucket.org/cabify/cbot/flowdock"
 )
 
 var (
@@ -22,26 +22,15 @@ func main() {
 		flag.PrintDefaults()
 		return
 	}
-	c, err := NewClient(*token)
-	if err != nil {
-		log.Fatal(err)
-	}
-	responders, err := InitExecutableCommands(*commandsDir, *prefix, func(e Event, output string) error {
-		return c.Message(Message{
-			Event:    "comment",
-			Content:  output,
-			Flow:     e.Flow,
-			UserName: *prefix,
-			ID:       e.ID,
-		})
-	})
+	c, err := flowdock.NewClient(*token)
 	if err != nil {
 		log.Fatal(err)
 	}
 	rooms := strings.Split(*flows, ",")
-	startStream(c, responders.handleEvent, rooms...)
+	startStream(c, rooms)
 }
 
+/*
 type Responders []Responder
 
 type Responder interface {
@@ -85,25 +74,27 @@ type Event struct {
 	Content json.RawMessage `json:"content"`
 }
 
-func startStream(client *Client, handler func(msg []byte) error, flows ...string) {
+*/
+
+func startStream(c *flowdock.Client, flows []string) {
 	log.Printf("Connecting to %v\n", flows)
-	stream, errors, err := client.Stream(flows...)
+	events, errors, err := c.EventStream(flows)
 	if err != nil {
 		log.Fatal(err)
 	}
 	for {
 		select {
-		case msg, ok := <-stream:
+		case event, ok := <-events:
 			if !ok {
-				log.Println("Stream closed!")
+				log.Println("Stream closed! Restarting")
 				time.Sleep(2 * time.Second)
-				go startStream(client, handler, flows...)
+				go startStream(c, flows)
 				return
 			}
-			if err := handler(msg); err != nil {
-				log.Printf("Handler error: %v", err)
+			switch event.Event {
+			case "message":
+				handleMessage(event)
 			}
-			//fmt.Println(string(msg))
 		case err := <-errors:
 			log.Printf("Stream Error: %v", err)
 		}
