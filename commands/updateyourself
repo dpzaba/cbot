@@ -17,9 +17,8 @@ git reset --hard origin/$branch --quiet
 
 make > /dev/null
 
-echo "Updated myself! (Wait a few seconds just in case)"
+echo "Updated myself"
 # reboot cbot in background
-at now << EOF
-sleep 1
-sudo stop cbot || true && sleep 1 && sudo cp /home/maxi/cbot/src/bitbucket.org/cabify/cbot/bin/linux-386/cbot /usr/local/bin/cbot && sudo start cbot
-EOF
+at now < /dev/null 2&>1 << EOF
+sudo stop cbot || true && sleep 1 && sudo cp $dir/bin/linux-386/cbot /usr/local/bin/cbot && sudo start cbot
+EOF 
