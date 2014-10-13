@@ -3,6 +3,7 @@ package main
 import (
 	"flag"
 	"log"
+	"regexp"
 	"strings"
 	"time"
 
@@ -27,56 +28,58 @@ func main() {
 		log.Fatal(err)
 	}
 	rooms := strings.Split(*flows, ",")
-	startStream(c, rooms)
+	responders, err := InitMessageResponders(*commandsDir)
+	if err != nil {
+		log.Fatal(err)
+	}
+	for _, responder := range responders {
+		log.Printf("Registered <%s> responder", responder.Name)
+	}
+	startStream(c, rooms, responders)
 }
 
-/*
-type Responders []Responder
-
-type Responder interface {
-	Handle(event Event, content string, args []string)
+func handleMessage(c *flowdock.Client, e flowdock.Event, responders []*MessageResponder) {
+	content, args, err := parseMessageContent(e)
+	if err != nil {
+		log.Printf("Error parsing message: %v", err)
+		return
+	}
+	if len(content) == 0 {
+		return
+	}
+	direct := len(args) > 0 && args[0] == *prefix
+	directHandled := !direct
+	for _, responder := range responders {
+		caught, err := responder.Handle(direct, content, args[1:], func(response string) error {
+			comment := flowdock.NewComment(e.ID, e.Flow, *prefix, response)
+			return c.PostEvent(*comment)
+		})
+		if err != nil {
+			log.Println(err)
+			continue
+		}
+		if caught && direct {
+			directHandled = true
+		}
+	}
+	if !directHandled {
+		log.Printf("Unhandled direct message: %s", content)
+	}
 }
 
 var spaceSplitter *regexp.Regexp = regexp.MustCompile("\\s+")
 
-func (r *Responders) handleMessage(event Event) error {
-	var content string
-	if err := json.Unmarshal(event.Content, &content); err != nil {
-		return err
+func parseMessageContent(e flowdock.Event) (string, []string, error) {
+	content, err := e.MessageContent()
+	if err != nil {
+		return content, nil, err
 	}
 	cleaned := strings.ToLower(strings.TrimSpace(content))
 	args := spaceSplitter.Split(cleaned, -1)
-	for _, responder := range *r {
-		go responder.Handle(event, content, args)
-	}
-	return nil
+	return content, args, nil
 }
 
-func (r *Responders) handleEvent(msg []byte) error {
-	var event Event
-	if err := json.Unmarshal(msg, &event); err != nil {
-		return err
-	}
-	switch event.Event {
-	case "message": // normal message (not threaded)
-		if err := r.handleMessage(event); err != nil {
-			return err
-		}
-	}
-	return nil
-}
-
-type Event struct {
-	Event   string          `json:"event"`
-	ID      int             `json:"id,omitempty"`
-	User    string          `json:"user,omitempty"`
-	Flow    string          `json:"flow,omitempty"`
-	Content json.RawMessage `json:"content"`
-}
-
-*/
-
-func startStream(c *flowdock.Client, flows []string) {
+func startStream(c *flowdock.Client, flows []string, responders []*MessageResponder) {
 	log.Printf("Connecting to %v\n", flows)
 	events, errors, err := c.EventStream(flows)
 	if err != nil {
@@ -88,12 +91,12 @@ func startStream(c *flowdock.Client, flows []string) {
 			if !ok {
 				log.Println("Stream closed! Restarting")
 				time.Sleep(2 * time.Second)
-				go startStream(c, flows)
+				go startStream(c, flows, responders)
 				return
 			}
 			switch event.Event {
 			case "message":
-				handleMessage(event)
+				handleMessage(c, event, responders)
 			}
 		case err := <-errors:
 			log.Printf("Stream Error: %v", err)
