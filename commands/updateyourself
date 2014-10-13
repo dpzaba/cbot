@@ -3,7 +3,7 @@ set -o errexit
 
 export GOPATH=/home/maxi/cbot/
 # cbot repo
-dir=/home/maxi/cbot/bitbucket.org/cabify/cbot
+dir=/home/maxi/cbot/src/bitbucket.org/cabify/cbot
 branch="master"
 
 cd $dir
