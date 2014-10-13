@@ -22,3 +22,4 @@ echo "Updated myself"
 at now < /dev/null 2&>1 << EOF
 sudo stop cbot || true && sleep 1 && sudo cp $dir/bin/linux-386/cbot /usr/local/bin/cbot && sudo start cbot
 EOF 
+
