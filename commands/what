@@ -37,6 +37,8 @@ when "day is it?", "day is it today?"
   what_day_is_it_today?
 when %r{is on staging( on (?<app_name>\w+))?\?}
   puts `./whats-on-staging #{$~[:app_name]}`
+when %r{is (new|changed)( on (?<app_name>\w+))?\?}
+  puts `./changeset #{$~[:app_name]}`
 else
   puts "I don't know, my creators didn't teach me :("
 end
