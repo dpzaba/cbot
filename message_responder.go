@@ -43,10 +43,10 @@ type MessageResponder struct {
 
 func (c *MessageResponder) Handle(direct bool, content string, args []string, responder func(string) error) (bool, error) {
 	var cmd *exec.Cmd
-	if direct && strings.HasPrefix(c.Name, "_") {
-		cmd = exec.Command(c.Path, content)
-	} else if len(args) >= 1 && args[0] == c.Name {
+	if direct && len(args) > 0 && args[0] == c.Name {
 		cmd = exec.Command(c.Path, args[1:]...)
+	} else if !direct && strings.HasPrefix(c.Name, "_") {
+		cmd = exec.Command(c.Path, content)
 	} else {
 		return false, nil
 	}
