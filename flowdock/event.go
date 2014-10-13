@@ -40,7 +40,7 @@ func NewMessage(flow, username, content string) *Event {
 	}).StringContent(content)
 }
 
-func NewComment(message int, flow, username, content string) *Event {
+func NewComment(message uint, flow, username, content string) *Event {
 	return (&Event{
 		Event:    "comment",
 		UserName: username,
@@ -75,8 +75,8 @@ type Event struct {
 	Flow     string           `json:"flow"`
 	UserName string           `json:"external_user_name,omitempty"` // send when sending as a different user, ie "cbot"
 	User     string           `json:"user,omitempty"`
-	ID       int              `json:"id,omitempty"`
-	Message  int              `json:"message,omitempty"` // required for comments, The id of the commented parent message (which must not be a comment)
+	ID       uint             `json:"id,omitempty"`
+	Message  uint             `json:"message,omitempty"` // required for comments, The id of the commented parent message (which must not be a comment)
 	UUID     string           `json:"uuid,omitempty"`
 	Tags     []string         `json:"tags,omitempty"`
 	Sent     int              `json:"sent,omitempty"`
