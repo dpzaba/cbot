@@ -2,19 +2,22 @@ package main
 
 import (
 	"flag"
+	"fmt"
 	"log"
 	"regexp"
 	"strings"
 	"time"
 
+	"bytes"
+
 	"bitbucket.org/cabify/cbot/flowdock"
 )
 
 var (
-	prefix      = flag.String("prefix", "cbot", "bot prefix")
-	token       = flag.String("token", "", "rest token")
-	flows       = flag.String("flows", "", "flows, separted by comma")
-	commandsDir = flag.String("c", "commands", "commands directory")
+	prefix      = flag.String("prefix", "cbot", "bot prefix")          // prefix for direct commands
+	token       = flag.String("token", "", "rest token")               // Flowdock rest token
+	flows       = flag.String("flows", "", "flows, separted by comma") // of form cabify/test,cabify/other
+	commandsDir = flag.String("c", "commands", "commands directory")   // directory of the executable commands
 )
 
 func main() {
@@ -38,6 +41,7 @@ func main() {
 	startStream(c, rooms, responders)
 }
 
+// handleMessage receives an event and passes it to the MessageResponders
 func handleMessage(c *flowdock.Client, e flowdock.Event, responders []*MessageResponder) {
 	content, args, err := parseMessageContent(e)
 	if err != nil {
@@ -47,10 +51,12 @@ func handleMessage(c *flowdock.Client, e flowdock.Event, responders []*MessageRe
 	if len(content) == 0 {
 		return
 	}
+	// determine if this is a direct message (prefixed with bots name)
 	direct := len(args) > 0 && args[0] == *prefix
 	directHandled := !direct
 	for _, responder := range responders {
 		caught, err := responder.Handle(direct, content, args[1:], func(response string) error {
+			// handle the output of the command by replying to the message
 			comment := flowdock.NewComment(e.ID, e.Flow, *prefix, response)
 			return c.PostEvent(*comment)
 		})
@@ -62,15 +68,24 @@ func handleMessage(c *flowdock.Client, e flowdock.Event, responders []*MessageRe
 			directHandled = true
 		}
 	}
+	// handle case when a direct message wasn't handled
 	if !directHandled {
 		log.Printf("Unhandled direct message: %s", content)
-		comment := flowdock.NewComment(e.ID, e.Flow, *prefix, "didn't recognize that command")
+		helpTxt := bytes.NewBufferString("didn't recognize that command. I understand:\n")
+		for _, r := range responders {
+			if r.Name[0] == '_' {
+				continue
+			}
+			helpTxt.WriteString(fmt.Sprintf("    %s %s", *prefix, r.Name))
+		}
+		comment := flowdock.NewComment(e.ID, e.Flow, *prefix, helpTxt.String())
 		c.PostEvent(*comment)
 	}
 }
 
 var spaceSplitter *regexp.Regexp = regexp.MustCompile("\\s+")
 
+// parseMessageContent cleans a message's content and breaks into args
 func parseMessageContent(e flowdock.Event) (string, []string, error) {
 	content, err := e.MessageContent()
 	if err != nil {
@@ -81,6 +96,7 @@ func parseMessageContent(e flowdock.Event) (string, []string, error) {
 	return content, args, nil
 }
 
+// startStream starts streaming the given flows and responds to messages
 func startStream(c *flowdock.Client, flows []string, responders []*MessageResponder) {
 	log.Printf("Connecting to %v\n", flows)
 	events, errors, err := c.EventStream(flows)
