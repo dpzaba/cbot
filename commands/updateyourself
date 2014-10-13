@@ -20,5 +20,6 @@ make > /dev/null
 echo "Updated myself"
 # reboot cbot in background
 at now 2> /dev/null <<EOF
+sleep 1
 sudo stop cbot || true && sleep 1 && sudo cp $dir/bin/linux-386/cbot /usr/local/bin/cbot && sudo start cbot
 EOF
