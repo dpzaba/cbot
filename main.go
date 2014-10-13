@@ -79,7 +79,9 @@ func handleMessage(c *flowdock.Client, e flowdock.Event, responders []*MessageRe
 			helpTxt.WriteString(fmt.Sprintf("    %s %s", *prefix, r.Name))
 		}
 		comment := flowdock.NewComment(e.ID, e.Flow, *prefix, helpTxt.String())
-		c.PostEvent(*comment)
+		if err := c.PostEvent(*comment); err != nil {
+			log.Println(err)
+		}
 	}
 }
 
