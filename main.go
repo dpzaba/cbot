@@ -64,6 +64,8 @@ func handleMessage(c *flowdock.Client, e flowdock.Event, responders []*MessageRe
 	}
 	if !directHandled {
 		log.Printf("Unhandled direct message: %s", content)
+		comment := flowdock.NewComment(e.ID, e.Flow, *prefix, "didn't recognize that command")
+		c.PostEvent(*comment)
 	}
 }
 
