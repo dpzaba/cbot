@@ -76,7 +76,7 @@ func handleMessage(c *flowdock.Client, e flowdock.Event, responders []*MessageRe
 			if r.Name[0] == '_' {
 				continue
 			}
-			helpTxt.WriteString(fmt.Sprintf("    %s %s", *prefix, r.Name))
+			helpTxt.WriteString(fmt.Sprintf("    %s %s\n", *prefix, r.Name))
 		}
 		comment := flowdock.NewComment(e.ID, e.Flow, *prefix, helpTxt.String())
 		if err := c.PostEvent(*comment); err != nil {
