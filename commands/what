@@ -24,8 +24,8 @@ end
 
 def what_are_your_rules?
   puts "I may not injure a human being or, through inaction, allow a human being to come to harm."
-  puts "I must obey the orders given to it by human beings, except where such orders would conflict with the First Law."
-  puts "I must protect its own existence as long as such protection does not conflict with the First or Second Law."
+  puts "I must obey the orders given to me by human beings, except where such orders would conflict with the First Law."
+  puts "I must protect my own existence as long as such protection does not conflict with the First or Second Law."
 end
 
 case ARGV.join(" ").downcase
