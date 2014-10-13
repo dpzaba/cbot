@@ -6,7 +6,7 @@ GOBUILD=$(GOCMD) build
 GOCLEAN=$(GOCMD) clean
 GOINSTALL=$(GOCMD) install
 GOTEST=$(GOCMD) test
-GODEP=$(GOCMD) get -d -v ./... 
+GODEP=$(GOCMD) get ./... 
 GOFMT=gofmt -w
  
 default: build
