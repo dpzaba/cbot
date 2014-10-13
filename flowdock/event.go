@@ -2,7 +2,6 @@ package flowdock
 
 import (
 	"encoding/json"
-	"fmt"
 	"net/url"
 )
 
@@ -84,8 +83,12 @@ type Event struct {
 
 // StringContent sets the content to a string
 func (e *Event) StringContent(content string) *Event {
-	c := json.RawMessage(fmt.Sprintf(`"%s"`, content))
-	e.Content = &c
+	raw, err := json.Marshal(content)
+	if err != nil {
+		return e
+	}
+	r := json.RawMessage(raw)
+	e.Content = &r
 	return e
 }
 
