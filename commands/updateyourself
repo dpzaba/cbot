@@ -3,7 +3,7 @@ set -o errexit
 
 export GOPATH=/home/maxi/cbot/
 # cbot repo
-dir=/home/maxi/cbot/src/bitbucket.org/cabify/cbot
+dir='/home/maxi/cbot/src/bitbucket.org/cabify/cbot'
 branch="master"
 
 cd $dir
@@ -19,6 +19,6 @@ make > /dev/null
 
 echo "Updated myself"
 # reboot cbot in background
-at now > /dev/null 2&>1 <<EOF
+at now 2> /dev/null <<EOF
 sudo stop cbot || true && sleep 1 && sudo cp $dir/bin/linux-386/cbot /usr/local/bin/cbot && sudo start cbot
 EOF
