@@ -7,7 +7,7 @@ def what_day_is_it_today?
   wday = Time.now.wday
   if wday == 5
     uri = URI('https://ajax.googleapis.com/ajax/services/search/images')
-    uri.query = URI.encode_www_form(v: "1.0", q: "it's friday")
+    uri.query = URI.encode_www_form(v: "1.0", safe: "active", rsz: "8", q: "it's friday")
     res = Net::HTTP.get_response(uri)
 
     # get url
@@ -22,11 +22,23 @@ def what_day_is_it_today?
   end
 end
 
-case ARGV.join(" ")
+def what_are_your_rules?
+  puts "I may not injure a human being or, through inaction, allow a human being to come to harm."
+  puts "I must obey the orders given to it by human beings, except where such orders would conflict with the First Law."
+  puts "I must protect its own existence as long as such protection does not conflict with the First or Second Law."
+end
+
+case ARGV.join(" ").downcase
+when "is the answer to the ultimate question of life, the universe, and everything?"
+  puts "42"
+when "are your rules?"
+  what_are_your_rules?
 when "day is it?", "day is it today?"
   what_day_is_it_today?
 when %r{is on staging( on (?<app_name>\w+))?\?}
   puts `./whats-on-staging #{$~[:app_name]}`
+when %r{is (new|changed)( on (?<app_name>\w+))?\?}
+  puts `./changeset #{$~[:app_name]}`
 else
-  puts "what do you want from me?"
+  puts "I don't know, my creators didn't teach me :("
 end
