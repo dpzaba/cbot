@@ -1,8 +1,9 @@
 #!/usr/bin/env bash
 set -o errexit
 
+export GOPATH=/home/maxi/cbot/
 # cbot repo
-dir=/home/maxi/cbot/cbot
+dir=/home/maxi/cbot/bitbucket.org/cabify/cbot
 branch="master"
 
 cd $dir
@@ -16,10 +17,9 @@ git reset --hard origin/$branch --quiet
 
 make > /dev/null
 
+echo "Updated myself! (Wait a few seconds just in case)"
 # reboot cbot in background
 at now << EOF
 sleep 1
-sudo stop cbot || true && sleep 2 && cp /home/maxi/cbot/cbot/bin/linux-386/cbot /usr/local/bin/cbot && sudo start cbot
+sudo stop cbot || true && sleep 1 && cp /home/maxi/cbot/cbot/bin/linux-386/cbot /usr/local/bin/cbot && sudo start cbot
 EOF
-
-echo "Updated myself! (Wait a few seconds just in case)"

@@ -1,23 +1,14 @@
-package main
+package flowdock
 
 import (
-	"bufio"
 	"bytes"
-	"encoding/json"
 	"fmt"
 	"io/ioutil"
 	"net/http"
-	"net/url"
-	"strings"
-)
-
-const (
-	streamURL = "https://stream.flowdock.com/"
-	restURL   = "https://api.flowdock.com/"
 )
 
 type Client struct {
-	token string
+	token string // user's rest token
 }
 
 func NewClient(token string) (*Client, error) {
@@ -26,6 +17,7 @@ func NewClient(token string) (*Client, error) {
 	}, nil
 }
 
+/*
 func (c *Client) StreamURL(flows ...string) string {
 	base, _ := url.Parse(streamURL)
 	base.User = url.User(c.token) // set token as BasicAuth user
@@ -108,6 +100,24 @@ func (c *Client) Message(msg Message) error {
 	if resp.StatusCode != 200 && resp.StatusCode != 201 {
 		body, _ := ioutil.ReadAll(resp.Body)
 		return fmt.Errorf("error sending chat message: %s. %s", resp.Status, string(body))
+	}
+	return nil
+}
+*/
+
+func (c *Client) PostJSON(endpoint string, data []byte) error {
+	req, err := http.NewRequest("POST", endpoint, bytes.NewBuffer(data))
+	if err != nil {
+		return err
+	}
+	req.Header.Set("Content-Type", "application/json")
+	resp, err := (&http.Client{}).Do(req)
+	if err != nil {
+		return err
+	}
+	if resp.StatusCode != 200 && resp.StatusCode != 201 {
+		body, _ := ioutil.ReadAll(resp.Body)
+		return fmt.Errorf("error POSTing to Rest API: %s. %s", resp.Status, string(body))
 	}
 	return nil
 }
