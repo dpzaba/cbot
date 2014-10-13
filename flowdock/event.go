@@ -79,7 +79,7 @@ type Event struct {
 	Message  uint             `json:"message,omitempty"` // required for comments, The id of the commented parent message (which must not be a comment)
 	UUID     string           `json:"uuid,omitempty"`
 	Tags     []string         `json:"tags,omitempty"`
-	Sent     uint             `json:"sent,omitempty"`
+	//	Sent     uint             `json:"sent,omitempty"`
 }
 
 // StringContent sets the content to a string
