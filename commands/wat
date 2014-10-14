@@ -2,10 +2,6 @@
 #
 # Borrowed from: https://raw.githubusercontent.com/OtpChatBot/Ybot/master/plugins/wat.rb
 #
-#
-# Ybot WAT plugin
-# Usage: Ybot wat
-#
 
 require 'net/http'
 require 'json'

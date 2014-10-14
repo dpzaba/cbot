@@ -1,0 +1,11 @@
+#!/usr/bin/env ruby
+
+require 'net/http'
+require 'json'
+
+uri = URI('http://api.adviceslip.com/advice')
+res = Net::HTTP.get_response(uri)
+
+json = JSON.parse(res.body)
+
+puts json['slip']['advice']

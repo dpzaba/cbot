@@ -1,14 +1,15 @@
 #!/usr/bin/env ruby
-#
+
 # Borrowed from: https://raw.githubusercontent.com/OtpChatBot/Ybot/master/plugins/decide.rb
-#
-# Ybot decision helper plugin
-# Usage: Ybot decide foo bar
-#
 
 if ARGV.length == 0
-    puts 'Usage: cbot decide foo bar'
-    exit
+  puts 'Usage: cbot decide foo, bar, or foobar'
+  exit
 end
 
-puts 'Definitely: ' + ARGV.sample
+PREFIXES = ['Definitely', 'For sure', 'Obviously', 'Clearly', 'It has been decided:']
+EXCLUDED = /or|between|,/
+
+choices = ARGV.join(' ').split(/or|,/).map{ |w| w.gsub(EXCLUDED, '').strip }.reject { |w| w == '' }
+
+puts "#{PREFIXES.sample} '#{choices.sample}'"
