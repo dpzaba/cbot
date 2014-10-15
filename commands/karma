@@ -1,0 +1,40 @@
+#!/usr/bin/env ruby
+
+class KarmaListener
+  def listen(msg)
+    msg.scan(/@(\w+)\+\+/) do |nickname|
+      redis.incr redis_key_for nickname
+    end
+  end
+
+  def karma_for(nickname)
+    redis.get(redis_key_for nickname).to_i
+  end
+
+  private
+
+  def redis_key_for(nickname)
+    ["cbot", "karma", nickname].join ":"
+  end
+
+  def redis
+    @redis ||= begin
+                 require 'redis'
+                 Redis.new
+               end
+  end
+end
+
+kl = KarmaListener.new
+
+command, *rest = ARGV
+rest.each do |s|
+  case command
+  when "for"
+    puts "karma for #{s}: #{kl.karma_for s}"
+  when "listen"
+    kl.listen s
+  else
+    puts "¯\\_(ツ)_/¯"
+  end
+end
