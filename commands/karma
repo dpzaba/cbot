@@ -8,7 +8,7 @@ class KarmaListener
   end
 
   def karma_for(nickname)
-    nickname = nickname[1, -1] if nickname.start_with?("@")
+    nickname = nickname[1..-1] if nickname.start_with?("@")
     redis.get(redis_key_for nickname).to_i
   end
 
