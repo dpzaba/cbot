@@ -1,7 +1,7 @@
 #!/usr/bin/env ruby
 
 s = ARGV.first
-if s =~ %r{\A:trolleybus: Deploy to (staging|production) https://rollbar\.com/deploy/\d+/ #rollbar #deploy\z}
+if s =~ %r{Deploy to (staging|production) https://rollbar\.com/deploy/\d+/ #rollbar #deploy}
   case $1
   when "staging"
     puts `./whats-on-staging`
