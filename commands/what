@@ -28,14 +28,17 @@ def what_are_your_rules?
   puts "I must protect my own existence as long as such protection does not conflict with the First or Second Law."
 end
 
-case ARGV.join(" ").downcase
+question = ARGV.join(" ").downcase
+question << "?" unless question.end_with?("?")
+
+case question
 when "is the answer to the ultimate question of life, the universe, and everything?"
   puts "42"
 when "are your rules?"
   what_are_your_rules?
 when "day is it?", "day is it today?"
   what_day_is_it_today?
-when %r{is (in|on) staging( (in|on) (?<app_name>\w+))?\??}
+when %r{is (in|on) staging( (in|on) (?<app_name>\w+))?\?}
   puts `./whats-on-staging #{$~[:app_name]}`
 when %r{is (new|changed)( on (?<app_name>\w+))?\?}
   puts `./changeset #{$~[:app_name]}`
