@@ -11,6 +11,6 @@ PREFIXES = ['Definitely', 'For sure', 'Obviously', 'Clearly', 'It has been decid
 EXCLUDED = /or|between|,/
 
 choices = ARGV.join(' ').split(/\bor\b|,/).map{ |w| w.gsub(EXCLUDED, '').strip }.reject { |w| w == '' }
-choices = choices.split if choices.length == 1
+choices = choices.first.split if choices.length == 1
 
 puts "#{PREFIXES.sample} '#{choices.sample}'"
