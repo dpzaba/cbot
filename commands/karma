@@ -8,6 +8,7 @@ class KarmaListener
   end
 
   def karma_for(nickname)
+    nickname = nickname[1, -1] if nickname.start_with?("@")
     redis.get(redis_key_for nickname).to_i
   end
 
@@ -28,13 +29,11 @@ end
 kl = KarmaListener.new
 
 command, *rest = ARGV
-rest.each do |s|
-  case command
-  when "for"
-    puts "karma for #{s}: #{kl.karma_for s}"
-  when "listen"
-    kl.listen s
-  else
-    puts "¯\\_(ツ)_/¯"
-  end
+case command
+when "for"
+  puts rest.map { |s| "    karma for #{s}: #{kl.karma_for s}" }
+when "listen"
+  kl.listen rest.join(" ")
+else
+  puts "¯\\_(ツ)_/¯"
 end
