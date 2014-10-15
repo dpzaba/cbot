@@ -39,9 +39,9 @@ when "are your rules?"
 when "day is it?", "day is it today?"
   what_day_is_it_today?
 when %r{is (in|on) staging( (in|on) (?<app_name>\w+))?\?}
-  puts `./whats-on-staging #{$~[:app_name]}`
+  puts `./helpers/whats-on-staging #{$~[:app_name]}`
 when %r{is (new|changed)( on (?<app_name>\w+))?\?}
-  puts `./changeset #{$~[:app_name]}`
+  puts `./helpers/changeset #{$~[:app_name]}`
 when "happened?", "happens?"
   puts `./bofh`
 else

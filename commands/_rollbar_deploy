@@ -4,9 +4,9 @@ s = ARGV.first
 if s =~ %r{Deploy to (staging|production) https://rollbar\.com/deploy/\d+/ #rollbar #deploy}
   case $1
   when "staging"
-    puts `./whats-on-staging`
+    puts `./helpers/whats-on-staging`
   when "production"
-    puts `./changeset`
+    puts `./helpers/changeset`
   end
 elsif s =~ /Deploy to (staging|production)/
   puts s.split(//).inspect
