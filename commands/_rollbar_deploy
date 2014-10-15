@@ -1,0 +1,13 @@
+#!/usr/bin/env ruby
+
+s = ARGV.first
+if s =~ %r{\A:trolleybus: Deploy to (staging|production) https://rollbar\.com/deploy/\d+/ #rollbar #deploy\z}
+  case $1
+  when "staging"
+    puts `./whats-on-staging`
+  when "production"
+    puts `./changeset`
+  end
+elsif s =~ /Deploy to (staging|production)/
+  puts s.split(//).inspect
+end
