@@ -1,7 +1,7 @@
 #!/usr/bin/env ruby
 
 s = ARGV.first
-if s =~ %r{Deploy to (staging|production) https://rollbar\.com/deploy/\d+/ #rollbar #deploy}
+if s =~ %r{Deploy to (staging|production) https://rollbar\.com/deploy/\d+/}
   case $1
   when "staging"
     puts `./helpers/whats-on-staging`
