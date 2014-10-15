@@ -31,7 +31,7 @@ kl = KarmaListener.new
 command, *rest = ARGV
 case command
 when "for"
-  puts rest.map { |s| "    karma for #{s}: #{kl.karma_for s}" }
+  puts rest.map { |s| "    karma for #{s}: #{kl.karma_for s}" }.join("\n")
 when "listen"
   kl.listen rest.join(" ")
 else
