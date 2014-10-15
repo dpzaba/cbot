@@ -14,7 +14,7 @@ class KarmaListener
   private
 
   def redis_key_for(nickname)
-    ["cbot", "karma", nickname].join ":"
+    ["cbot", "karma", nickname.downcase].join ":"
   end
 
   def redis
