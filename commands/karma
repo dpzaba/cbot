@@ -2,8 +2,8 @@
 
 class KarmaListener
   def listen(msg)
-    msg.scan(/@(\w+)\+\+/) do |nickname|
-      redis.incr redis_key_for nickname
+    msg.scan(/@(\w+)\+\+/) do |match|
+      redis.incr redis_key_for match.first
     end
   end
 
