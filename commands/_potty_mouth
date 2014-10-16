@@ -1,0 +1,28 @@
+#!/usr/bin/env ruby
+
+bad_words = /ass\b|asses\b|asshole|arse|\bbastard|\bbitch|damn\b|fuck|fucker|\bshit|puto|puta|\buber\b/i
+
+if ARGV.first =~ bad_words
+  require 'redis'
+  redis = Redis.new
+  last_key = 'cbot:potty_mouth:last_at'
+  counter_key = 'cbot:potty_mouth:counter'
+
+  redis.incr(counter_key)
+
+  if (last_at = redis.get(last_key))
+    last_swear = Time.at(last_at.to_i)
+    hours_since = (Time.now - last_swear).to_i / 3600
+
+    since = if hours_since < 24
+      "#{hours_since} hour#{hours_since != 1 ? 's' : ''}"
+    else
+      days_since = hours_since / 24
+      "#{days_since} day#{days_since != 1 ? 's' : ''}"
+    end
+
+    puts ":wc: This chat has been profanity free for: #{since} (#{redis.get(counter_key)} incidencts total)"
+  end
+
+  redis.set(last_key, Time.now.to_i)
+end
