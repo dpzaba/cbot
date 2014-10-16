@@ -1,6 +1,13 @@
 #!/usr/bin/env ruby
 
-bad_words = /ass\b|asses\b|asshole|arse|\bbastard|\bbitch|damn\b|fuck|fucker|\bshit|puto|puta|\buber\b/i
+bad_words = /
+  \b
+  (
+    ass(hole)?|arse|bastard|bitch|(god)?damn|(mother)?fuck(er)?|shit(ty)?|put[ao]
+  )
+  (es|s)?
+  \b
+/ix
 
 if ARGV.first =~ bad_words
   require 'redis'
