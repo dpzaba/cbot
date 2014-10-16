@@ -21,7 +21,7 @@ if ARGV.first =~ bad_words
       "#{days_since} day#{days_since != 1 ? 's' : ''}"
     end
 
-    puts ":wc: This chat has been profanity free for: #{since} (#{redis.get(counter_key)} incidencts total)"
+    puts ":wc: This chat has been profanity free for: #{since} (#{redis.get(counter_key)} incidents total)"
   end
 
   redis.set(last_key, Time.now.to_i)
