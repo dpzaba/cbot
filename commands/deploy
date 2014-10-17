@@ -58,6 +58,7 @@ if ! git ls-remote --heads --exit-code origin $branch > /dev/null; then
 fi;
 
 echo "Starting deploy of $app to $appEnv on branch $branch" 
+echo "" # required so that cbot sends previous message now and not at EOF
 
 # fetch any new branches
 git fetch --all --quiet

@@ -83,7 +83,9 @@ func runCommand(cmd *exec.Cmd) (<-chan string, error) {
 		return nil, err
 	}
 	outScanner := bufio.NewScanner(stdout)
+	outScanner.Split(scanDoubleLines)
 	errScanner := bufio.NewScanner(stderr)
+	errScanner.Split(scanDoubleLines)
 	if err := cmd.Start(); err != nil {
 		return nil, err
 	}
@@ -102,7 +104,7 @@ func runCommand(cmd *exec.Cmd) (<-chan string, error) {
 	go func() {
 		defer wg.Done()
 		for errScanner.Scan() {
-			output <- fmt.Sprintf("Err: %s", errScanner.Text())
+			output <- fmt.Sprintf("STDERR: %s", errScanner.Text())
 		}
 	}()
 	go func() {
@@ -113,4 +115,26 @@ func runCommand(cmd *exec.Cmd) (<-chan string, error) {
 		wg.Wait()
 	}()
 	return output, nil
+}
+
+func scanDoubleLines(data []byte, atEOF bool) (advance int, token []byte, err error) {
+	if atEOF && len(data) == 0 {
+		return 0, nil, nil
+	}
+	if i := strings.Index(string(data), "\n\n"); i >= 0 {
+		// We have a full newline-terminated line.
+		return i + 1, dropCR(data[0:i]), nil
+	}
+	// If we're at EOF, we have a final, non-terminated line. Return it.
+	if atEOF {
+		return len(data), dropCR(data), nil
+	}
+	// Request more data.
+	return 0, nil, nil
+}
+func dropCR(data []byte) []byte {
+	if len(data) > 0 && data[len(data)-1] == '\r' {
+		return data[0 : len(data)-1]
+	}
+	return data
 }
