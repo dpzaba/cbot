@@ -94,7 +94,7 @@ set +o errexit
 # return exit code of first command
 # http://stackoverflow.com/questions/1221833/bash-pipe-output-and-capture-exit-status
 startDeploy=$(date +%s)
-bundle exec cap $appEnv deploy
+bundle exec cap $appEnv deploy >> &2>1
 deployStatus=$?
 endDeploy=$(date +%s)
 
