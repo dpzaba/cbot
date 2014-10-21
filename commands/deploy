@@ -11,23 +11,43 @@ app=$(./helpers/normalize-app-name $1)
 appEnv=$2
 branch=$3
 
-logFile="/var/log/cbot/${app}_${appEnv}_${branch}.log"
+logFile="/var/log/cbot/${app}_${appEnv}.log"
+
+# Redirect STDOUT and STDERR to the logfile, and save STDOUT to fd 3
+exec 3>&1
+exec 2>&1 1>$logFile
+error ()
+{
+  # Re-establish stdout
+  exec >&3-
+  if [ "$1" != "" ]; then
+    printf "$1"
+  fi;
+  exit 1
+}
+print ()
+{
+  # Re-establish stdout
+  exec >&3-
+  if [ "$1" != "" ]; then
+    printf "$1"
+  fi;
+  exit 0
+}
 
 # save all output to logfile
-echo "################## $app $appEnv $branch" >> $logFile
-date >> $logFile
-echo "" >> $logFile
+echo "################## $app $appEnv $branch"
+date
+echo ""
 
 # assert there's an environment
 if [ "$appEnv" == "" ]; then
-  echo "Please provide an environment"
-  exit 1
+  error "Please provide an environment"
 fi;
 
 # assert environment is not production
 if [ "$appEnv" == "production-us" ]; then
-  echo "Whoooa! Cannot deploy to $appEnv... yet"
-  exit 1
+  error "Whoooa! Cannot deploy to $appEnv... yet"
 fi;
 
 # cd into project
@@ -39,22 +59,18 @@ if [[ -s "$HOME/.rvm/scripts/rvm" ]] ; then
   source "$HOME/.rvm/scripts/rvm"
   set -o errexit
 else
-  echo "ERROR: An RVM installation was not found"
-  exit 1
+  error "ERROR: An RVM installation was not found"
 fi
 
 # assert that git is clean
 dirty="$(git status --porcelain)"
 if [ -n "$dirty" ]; then
-  echo "Dirty git directory $(pwd):"
-  echo $dirty
-  exit 1
+  error "Dirty git directory $(pwd): $dirty"
 fi;
 
 # assert that the branch exists
 if ! git ls-remote --heads --exit-code origin $branch > /dev/null; then
-  echo "Branch $branch not found"
-  exit 1
+  error "Branch $branch not found"
 fi;
 
 echo "Starting deploy of $app to $appEnv on branch $branch" 
@@ -63,12 +79,12 @@ echo "" # required so that cbot sends previous message now and not at EOF
 # fetch any new branches
 git fetch --all --quiet
 # switch to branch
-git checkout $branch --quiet > /dev/null 2>&1
+git checkout $branch --quiet 
 # update to state of remote branch
 git reset --hard origin/$branch --quiet 
 
 # install any dependencies
-bundle check > /dev/null || bundle install > /dev/null
+bundle check || bundle install
 
 ## deploy
 
@@ -78,14 +94,13 @@ set +o errexit
 # return exit code of first command
 # http://stackoverflow.com/questions/1221833/bash-pipe-output-and-capture-exit-status
 startDeploy=$(date +%s)
-deploy=$(bundle exec cap $appEnv deploy 2>&1 | tee -a $logFile; exit ${PIPESTATUS[0]})
+bundle exec cap $appEnv deploy
 deployStatus=$?
 endDeploy=$(date +%s)
 
 if [ $deployStatus -ne 0 ]; then
-  echo "Error deploying, see $logFile"
-  exit 1
+  error "Error deploying, see $logFile"
 fi;
 
 deployTime=$((endDeploy-startDeploy))
-echo "Deployed $app app to $appEnv on branch $branch in $deployTime s"
+print "Deployed '${app}' to ${appEnv} on branch ${branch} in ${deployTime}s"
