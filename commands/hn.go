@@ -24,21 +24,35 @@ type Item struct {
 	Score int
 }
 
-var count = flag.Int("number", 10, "-number=n defines the number of posts to get")
-
 func init() {
 	goreq.SetConnectTimeout(10 * time.Second)
 	flag.Parse()
-	fmt.Println("Hacker News Top " + strconv.Itoa(*count))
-	fmt.Println("=====================")
 }
 
 func main() {
+	args := flag.Args()
+	cmd := args[0]
+	number, err := strconv.Atoi(args[1])
+	if err != nil {
+		number = 10
+	}
+	switch cmd {
+	case "top":
+		listTop(number)
+		return
+	}
+
+	fmt.Println("Sorry, idk this command")
+}
+
+func listTop(Number int) {
+	fmt.Println("Hacker News Top " + strconv.Itoa(Number))
+	fmt.Println("=====================")
 	top := topstories()
-	for i := 0; i < *count; i++ {
+	for i := 0; i < Number; i++ {
 		id := top[i]
 		if id > 0 {
-			fmt.Println(item(id))
+			fmt.Println(strconv.Itoa(i+1) + ":  " + item(id))
 		}
 	}
 }
