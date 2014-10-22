@@ -1,6 +1,7 @@
 package main
 
 import (
+	"flag"
 	"fmt"
 	"github.com/franela/goreq"
 	"strconv"
@@ -22,10 +23,16 @@ type Item struct {
 }
 
 func main() {
+
+	count := flag.Int("number", 10, "-number=n defines the number of posts to get")
+	flag.Parse()
+	fmt.Println("Hacker News Top")
 	top := topstories()
-	for i := 0; i < 10; i++ {
+	for i := 0; i < *count; i++ {
 		id := top[i]
-		printItem(item(id))
+		if id > 0 {
+			printItem(item(id))
+		}
 	}
 }
 
