@@ -1,7 +1,18 @@
 package main
 
-import "fmt"
+import (
+	"fmt"
+	"math/rand"
+	"time"
+)
 
 func main() {
-	fmt.Println("Hello there!")
+	rand.Seed(time.Now().UTC().UnixNano())
+	var msg string
+	if rand.Float32() > 0.9 {
+		msg = "Leave me alone!"
+	} else {
+		msg = "Hello from the internetz!"
+	}
+	fmt.Println(msg)
 }
