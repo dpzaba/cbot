@@ -31,18 +31,38 @@ func init() {
 
 func main() {
 	args := flag.Args()
-	cmd := args[0]
-	number, err := strconv.Atoi(args[1])
-	if err != nil {
-		number = 10
+
+	if len(args) < 1 {
+		help()
+		return
 	}
+
+	cmd := args[0]
+
 	switch cmd {
 	case "top":
+		if len(args) < 2 {
+			help()
+			return
+		}
+		number, err := strconv.Atoi(args[1])
+		if err != nil {
+			number = 10
+		}
 		listTop(number)
+		return
+	case "help":
+		help()
 		return
 	}
 
 	fmt.Println("Sorry, idk this command")
+}
+
+func help() {
+	fmt.Println("Available commands")
+	fmt.Println("cbot hn top {number}")
+	fmt.Println("cbot hn help")
 }
 
 func listTop(Number int) {
