@@ -1,16 +1,20 @@
 #!/usr/bin/env ruby
 
+require 'redis'
+
 class Karma
   def initialize(nickname)
     @nickname = nickname
   end
 
-  def inc
-    redis.inc redis_key
+  def incr
+    karma = redis.incr redis_key
+    puts "Increased karma for #{@nickname}. New karma is #{karma}"
   end
 
   def get
-    redis.get redis_key
+    karma = redis.get redis_key
+    puts "Karma for #{@nickname} is #{karma || 0}"
   end
 
   private
@@ -29,8 +33,8 @@ class Karma
 end
 
 cmd, nickname = ARGV
-unless %w[inc get].include?(cmd) && nickname && !nickname.empty?
-  puts "Usage: cbot karma [inc|get] <nickname>"
+unless %w[incr get].include?(cmd) && nickname && !nickname.empty?
+  puts "Usage: cbot karma [incr|get] <nickname>"
   exit
 end
 
