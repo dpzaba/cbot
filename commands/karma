@@ -29,7 +29,7 @@ class Karma
 end
 
 cmd, nickname = ARGV
-unless %w[inc get].include?(cmd) && nick && !nick.empty?
+unless %w[inc get].include?(cmd) && nickname && !nickname.empty?
   puts "Usage: cbot karma [inc|get] <nickname>"
   exit
 end
