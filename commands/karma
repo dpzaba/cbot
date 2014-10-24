@@ -1,0 +1,37 @@
+#!/usr/bin/env ruby
+
+class Karma
+  def initialize(nickname)
+    @nickname = nickname
+  end
+
+  def inc
+    redis.inc redis_key
+  end
+
+  def get
+    redis.get redis_key
+  end
+
+  private
+
+  def redis
+    @redis ||= Redis.new
+  end
+
+  def redis_key
+    ["cbot", "karma", normalized_nickname].join(":")
+  end
+
+  def normalized_nickname
+    @nickname.downcase.sub(/^@/, "")
+  end
+end
+
+cmd, nickname = ARGV
+unless %w[inc get].include?(cmd) && nick && !nick.empty?
+  puts "Usage: cbot karma [inc|get] <nickname>"
+  exit
+end
+
+Karma.new(nickname).send(cmd)
