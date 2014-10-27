@@ -24,14 +24,14 @@ class Karma
   def rank
     ranking = redis.zrevrange redis_key, 0, -1, with_scores: true
 
-    max_nickname_width = ranking.map(&:first).max_by(&:length).length
-    max_score          = ranking.map(&:last).max
+    max_nickname_width = ranking.map { |x| x.first.length }.max
+    max_score_width    = ranking.map { |x| x.last.to_i.to_s.length }.max
 
     ranking.each do |nickname, score|
       puts [
         "   ",
         nickname.ljust(max_nickname_width, "."),
-        score.to_i.to_s.rjust(max_score.to_i.to_s.length, " ")
+        score.to_i.to_s.rjust(max_score_width, " ")
       ].join(" ")
     end
   end
