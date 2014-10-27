@@ -29,6 +29,7 @@ class Karma
       return
     end
 
+    position += 1
     ord = case position.to_s
           when "11", "12", "13" then "th"
           when /1$/             then "st"
