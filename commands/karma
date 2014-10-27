@@ -9,20 +9,37 @@ class Karma
 
   def incr(by = 1)
     karma = redis.zincrby redis_key, by, normalized_nickname
-    puts "    Updated karma for #{@nickname}. New karma is #{karma.to_i}"
+    puts "    New karma for #{@nickname} is #{karma.to_i}"
   end
 
   def decr
     incr(-1)
   end
 
-  def get
+  def score
     karma = redis.zscore redis_key, normalized_nickname
-    puts "    Karma for #{@nickname} is #{(karma || 0).to_i}"
+    puts "    #{@nickname} has #{(karma || 0).to_i} points of karma"
   end
 
   def rank
-    ranking = redis.zrevrange redis_key, 0, -1, with_scores: true
+    position = redis.zrank redis_key, normalized_nickname
+
+    if position.nil?
+      puts "    #{@nickname} is not in the list!"
+      return
+    end
+
+    ord = case position
+          when /1$/ then "st"
+          when /2$/ then "nd"
+          when /3$/ then "rd"
+          else           "th"
+          end
+    puts "    #{@nickname} is at #{(position || 0).to_i}#{ord} position"
+  end
+
+  def hof(start = 0, stop = 4)
+    ranking = redis.zrevrange redis_key, start, stop, with_scores: true
 
     max_nickname_width = ranking.map { |x| x.first.length }.max
     max_score_width    = ranking.map { |x| x.last.to_i.to_s.length }.max
@@ -52,13 +69,13 @@ class Karma
 end
 
 cmd, nickname = ARGV
-if %w[incr decr get].include?(cmd) && nickname && !nickname.empty?
+if %w[incr decr score rank].include?(cmd) && nickname && !nickname.empty?
   Karma.new(nickname).send(cmd)
-elsif %w[rank].include?(cmd)
+elsif %w[hof].include?(cmd)
   Karma.new.send(cmd)
 else
   puts "    Usage:"
-  puts "      cbot karma [incr|get] <nickname>"
-  puts "      cbot karma rank"
+  puts "      cbot karma [incr|decr|score|rank] <nickname>"
+  puts "      cbot karma hof"
   exit
 end
