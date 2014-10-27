@@ -36,18 +36,6 @@ class Karma
     end
   end
 
-  def migrate
-    redis.keys("cbot:karma:*").each do |key|
-      nickname = key.split(":").last
-      score    = redis.get(key).to_i
-
-      karma = self.class.new(nickname)
-      score.times { karma.incr }
-
-      redis.del(key)
-    end
-  end
-
   private
 
   def redis
@@ -66,7 +54,7 @@ end
 cmd, nickname = ARGV
 if %w[incr decr get].include?(cmd) && nickname && !nickname.empty?
   Karma.new(nickname).send(cmd)
-elsif %w[rank migrate].include?(cmd)
+elsif %w[rank].include?(cmd)
   Karma.new.send(cmd)
 else
   puts "    Usage:"
