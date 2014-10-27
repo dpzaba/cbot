@@ -9,7 +9,7 @@ class Karma
 
   def incr(by = 1)
     karma = redis.zincrby redis_key, by, normalized_nickname
-    puts "Updated karma for #{@nickname}. New karma is #{karma.to_i}"
+    puts "    Updated karma for #{@nickname}. New karma is #{karma.to_i}"
   end
 
   def decr
@@ -18,7 +18,7 @@ class Karma
 
   def get
     karma = redis.zscore redis_key, normalized_nickname
-    puts "Karma for #{@nickname} is #{(karma || 0).to_i}"
+    puts "    Karma for #{@nickname} is #{(karma || 0).to_i}"
   end
 
   def rank
@@ -29,6 +29,7 @@ class Karma
 
     ranking.each do |nickname, score|
       puts [
+        "   ",
         nickname.ljust(max_nickname_width, "."),
         score.to_i.to_s.rjust(max_score.to_i.to_s.length, " ")
       ].join(" ")
