@@ -22,7 +22,7 @@ class Karma
   end
 
   def rank
-    position = redis.zrank redis_key, normalized_nickname
+    position = redis.zrevrank redis_key, normalized_nickname
 
     if position.nil?
       puts "    #{@nickname} is not in the list!"
