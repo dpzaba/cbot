@@ -40,7 +40,7 @@ class Karma
     puts "    #{@nickname} is at #{(position || 0).to_i}#{ord} position"
   end
 
-  def hof(start = 0, stop = 4)
+  def range(start = 0, stop = -1)
     ranking = redis.zrevrange redis_key, start, stop, with_scores: true
 
     max_nickname_width = ranking.map { |x| x.first.length }.max
@@ -53,6 +53,14 @@ class Karma
         score.to_i.to_s.rjust(max_score_width, " ")
       ].join(" ")
     end
+  end
+
+  def winners
+    range(0, 4)
+  end
+
+  def losers
+    range(-5, -1)
   end
 
   private
@@ -73,11 +81,11 @@ end
 cmd, nickname = ARGV
 if %w[incr decr score rank].include?(cmd) && nickname && !nickname.empty?
   Karma.new(nickname).send(cmd)
-elsif %w[hof].include?(cmd)
+elsif %w[winners losers].include?(cmd)
   Karma.new.send(cmd)
 else
   puts "    Usage:"
   puts "      cbot karma [incr|decr|score|rank] <nickname>"
-  puts "      cbot karma hof"
+  puts "      cbot karma [winners|losers]"
   exit
 end
