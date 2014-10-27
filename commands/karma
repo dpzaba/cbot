@@ -42,6 +42,8 @@ class Karma
 
       karma = self.class.new(nickname)
       score.times { karma.incr }
+
+      redis.del(key)
     end
   end
 
