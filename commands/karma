@@ -3,18 +3,46 @@
 require 'redis'
 
 class Karma
-  def initialize(nickname)
+  def initialize(nickname = nil)
     @nickname = nickname
   end
 
-  def incr
-    karma = redis.incr redis_key
-    puts "Increased karma for #{@nickname}. New karma is #{karma}"
+  def incr(by = 1)
+    karma = redis.zincrby redis_key, by, normalized_nickname
+    puts "Updated karma for #{@nickname}. New karma is #{karma.to_i}"
+  end
+
+  def decr
+    incr(-1)
   end
 
   def get
-    karma = redis.get redis_key
-    puts "Karma for #{@nickname} is #{karma || 0}"
+    karma = redis.zscore redis_key, normalized_nickname
+    puts "Karma for #{@nickname} is #{(karma || 0).to_i}"
+  end
+
+  def rank
+    ranking = redis.zrevrange redis_key, 0, -1, with_scores: true
+
+    max_nickname_width = ranking.map(&:first).max_by(&:length).length
+    max_score          = ranking.map(&:last).max
+
+    ranking.each do |nickname, score|
+      puts [
+        nickname.ljust(max_nickname_width, "."),
+        score.to_i.to_s.rjust(max_score.to_i.to_s.length, " ")
+      ].join(" ")
+    end
+  end
+
+  def migrate
+    redis.keys("cbot:karma:*").each do |key|
+      nickname = key.split(":").last
+      score    = redis.get(key).to_i
+
+      karma = self.class.new(nickname)
+      score.times { karma.incr }
+    end
   end
 
   private
@@ -24,7 +52,7 @@ class Karma
   end
 
   def redis_key
-    ["cbot", "karma", normalized_nickname].join(":")
+    "cbot:karma"
   end
 
   def normalized_nickname
@@ -33,9 +61,13 @@ class Karma
 end
 
 cmd, nickname = ARGV
-unless %w[incr get].include?(cmd) && nickname && !nickname.empty?
-  puts "Usage: cbot karma [incr|get] <nickname>"
+if %w[incr decr get].include?(cmd) && nickname && !nickname.empty?
+  Karma.new(nickname).send(cmd)
+elsif %w[rank migrate].include?(cmd)
+  Karma.new.send(cmd)
+else
+  puts "    Usage:"
+  puts "      cbot karma [incr|get] <nickname>"
+  puts "      cbot karma rank"
   exit
 end
-
-Karma.new(nickname).send(cmd)
