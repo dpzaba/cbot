@@ -29,11 +29,12 @@ class Karma
       return
     end
 
-    ord = case position
-          when /1$/ then "st"
-          when /2$/ then "nd"
-          when /3$/ then "rd"
-          else           "th"
+    ord = case position.to_s
+          when "11", "12", "13" then "th"
+          when /1$/             then "st"
+          when /2$/             then "nd"
+          when /3$/             then "rd"
+          else                       "th"
           end
     puts "    #{@nickname} is at #{(position || 0).to_i}#{ord} position"
   end
