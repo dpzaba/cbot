@@ -89,5 +89,4 @@ else
   puts "    Usage:"
   puts "      cbot karma [incr|decr|score|rank] <nickname>"
   puts "      cbot karma [winners|losers]"
-  exit
 end
