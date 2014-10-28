@@ -18,7 +18,7 @@ class Karma
 
   def score
     karma = redis.zscore redis_key, normalized_nickname
-    puts "    #{@nickname} has #{(karma || 0).to_i} points of karma"
+    puts "    #{@nickname} has #{karma.to_i} points of karma"
   end
 
   def rank
@@ -29,15 +29,7 @@ class Karma
       return
     end
 
-    position += 1
-    ord = case position.to_s
-          when "11", "12", "13" then "th"
-          when /1$/             then "st"
-          when /2$/             then "nd"
-          when /3$/             then "rd"
-          else                       "th"
-          end
-    puts "    #{@nickname} is at #{(position || 0).to_i}#{ord} position"
+    puts "    #{@nickname} is at #{ordinalize(position + 1)} position"
   end
 
   def range(start = 0, stop = -1)
@@ -75,6 +67,16 @@ class Karma
 
   def normalized_nickname
     @nickname.downcase.sub(/^@/, "")
+  end
+
+  def ordinalize(position)
+    ord = if (11..13).include? position
+            "th"
+          else
+            { 1 => "st", 2 => "nd", 3 => "rd" }.fetch(position % 10, "th")
+          end
+
+    "#{position}#{ord}"
   end
 end
 
