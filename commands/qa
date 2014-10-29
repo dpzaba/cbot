@@ -1,13 +1,50 @@
-#!/usr/bin/env bash
-set -o errexit
+#!/usr/bin/env ruby
 
-if [ "$#" -ne 1 ]; then
-  echo "Please provide <branch>"
-  exit 1
-fi
+require "redis"
 
-# assign variables from args
-branch=$1
+class QA
+  Blocked = Class.new(StandardError)
 
-#echo "QA team is so lazy that we have a special command for them"
-./deploy cabify_server staging-us $branch
+  def block
+    redis.set "cbot:qa:blocked", "true"
+  end
+
+  def unblock
+    redis.del "cbot:qa:blocked"
+  end
+
+  def deploy(branch)
+    raise Blocked if blocked?
+
+    `./deploy cabify_server staging-us ${branch}`
+  end
+
+  private
+
+  def blocked?
+    redis.get("cbot:qa:blocked") == "true"
+  end
+
+  def redis
+    @redis ||= Redis.new
+  end
+end
+
+branch_name = ARGV.first
+qa = QA.new
+
+case branch_name
+when "block", "unblock"
+  qa.send(branch_name)
+  puts "QA has been #{branch_name}ed"
+when nil, ""
+  puts "    Usage:"
+  puts "      cbot qa [block|unblock]"
+  puts "      cbot qa <branch_name>"
+else
+  begin
+    puts qa.deploy branch_name
+  rescue QA::Blocked
+    puts "Cannot deploy to staging, it is blocked!"
+  end
+end
