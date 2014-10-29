@@ -13,10 +13,10 @@ class QA
     redis.del "cbot:qa:blocked"
   end
 
-  def deploy(branch)
+  def deploy(branch_name)
     raise Blocked if blocked?
 
-    `./deploy cabify_server staging-us ${branch}`
+    `./deploy cabify_server staging-us #{branch_name}`
   end
 
   private
