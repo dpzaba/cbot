@@ -7,6 +7,12 @@ class Karma
     @nickname = nickname
   end
 
+  def rem
+    score # just in case we removed by accident, we can readd him
+    redis.zrem redis_key, normalized_nickname
+    puts "    #{@nickname} has just been removed"
+  end
+
   def incr(by = 1)
     karma = redis.zincrby redis_key, by, normalized_nickname
     puts "    New karma for #{@nickname} is #{karma.to_i}"
@@ -81,9 +87,9 @@ class Karma
 end
 
 cmd, nickname = ARGV
-if %w[incr decr score rank].include?(cmd) && nickname && !nickname.empty?
+if %w[incr decr score rank rem].include?(cmd) && nickname && !nickname.empty?
   Karma.new(nickname).send(cmd)
-elsif %w[winners losers].include?(cmd)
+elsif %w[winners losers range].include?(cmd)
   Karma.new.send(cmd)
 else
   puts "    Usage:"
