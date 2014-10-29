@@ -93,7 +93,7 @@ func parseMessageContent(e flowdock.Event) (string, []string, error) {
 	if err != nil {
 		return content, nil, err
 	}
-	cleaned := strings.ToLower(strings.TrimSpace(content))
+	cleaned := strings.TrimSpace(content)
 	args := spaceSplitter.Split(cleaned, -1)
 	return content, args, nil
 }
