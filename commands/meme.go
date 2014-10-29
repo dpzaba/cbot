@@ -43,10 +43,10 @@ func main() {
 }
 
 func help() {
-	fmt.Print("Meme command usage")
-	fmt.Print("==================")
-	fmt.Print("cbot meme [get|del] (meme-key)")
-	fmt.Print("cbot meme [set] (meme-key) (meme-text|url)")
+	fmt.Println("Meme command usage")
+	fmt.Println("==================")
+	fmt.Println("cbot meme [get|del] (meme-key)")
+	fmt.Println("cbot meme [set] (meme-key) (meme-text|url)")
 }
 
 func set(meme string, text string) {
