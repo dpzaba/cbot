@@ -78,5 +78,5 @@ func conn() redis.Conn {
 }
 
 func memeKey(meme string) string {
-	return "meme:" + meme
+	return "cbot:meme:" + meme
 }
