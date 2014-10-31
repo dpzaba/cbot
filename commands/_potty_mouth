@@ -3,7 +3,7 @@
 bad_words = /
   \b
   (
-    ass(hole)?|arse|bastard|bitch|(god)?damn|(mother)?fuck(er)?|shit(ty)?|put[ao]
+    ass(hole)?|arse|ba+stard|bi+tch|(god)?da+mn|(mother)?fu+ck(er)?|shi+t(ty)?|put[ao]+
   )
   (es|s)?
   \b
@@ -18,10 +18,13 @@ if ARGV.first =~ bad_words
   redis.incr(counter_key)
 
   if (last_at = redis.get(last_key))
-    last_swear = Time.at(last_at.to_i)
-    hours_since = (Time.now - last_swear).to_i / 3600
+    diff = (Time.now - Time.at(last_at.to_i)).to_i
+    mins_since = diff / 60
+    hours_since = mins_since / 60
 
-    since = if hours_since < 24
+    since = if mins_since < 60
+      "#{mins_since} minute#{mins_since != 1 ? 's': ''}"
+    elsif hours_since < 24
       "#{hours_since} hour#{hours_since != 1 ? 's' : ''}"
     else
       days_since = hours_since / 24
