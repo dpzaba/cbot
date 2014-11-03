@@ -56,7 +56,7 @@ when nil, ""
   puts "      cbot qa <branch_name>"
 else
   begin
-    qa.deploy branch_name { |s| puts s }
+    qa.deploy(branch_name) { |s| puts s }
   rescue QA::Blocked
     puts "Cannot deploy to staging, it is blocked!"
   end
