@@ -43,6 +43,8 @@ class QA
   end
 end
 
+$stdout.sync = true
+
 branch_name = ARGV.first
 qa = QA.new
 
