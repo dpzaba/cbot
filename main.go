@@ -180,7 +180,7 @@ func updateTrelloMarkovChain() (bool, error) {
 	}
 	chain := trello_markov.NewChain(3)
 	for b := range corpus {
-		trelloMarkovChain.Build(bytes.NewBuffer(b))
+		chain.Build(bytes.NewBuffer(b))
 	}
 	trelloMarkovChain = chain
 	return false, nil
