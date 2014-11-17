@@ -65,7 +65,7 @@ func handleMessage(c *flowdock.Client, e flowdock.Event, responders []*MessageRe
 
 	// handle 'help' command
 	if len(args) == 1 || (len(args) > 1 && args[1] == "help") {
-		helpTxt := bytes.NewBufferString("Help!. I understand:\n")
+		helpTxt := bytes.NewBufferString("I understand:\n")
 		for _, r := range responders {
 			if r.Name[0] == '_' {
 				continue
@@ -178,9 +178,10 @@ func updateTrelloMarkovChain() (bool, error) {
 	if err != nil {
 		return false, err
 	}
-	trelloMarkovChain = trello_markov.NewChain(3)
+	chain := trello_markov.NewChain(3)
 	for b := range corpus {
 		trelloMarkovChain.Build(bytes.NewBuffer(b))
 	}
+	trelloMarkovChain = chain
 	return false, nil
 }
