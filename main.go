@@ -171,7 +171,7 @@ func recurrentTrelloMarkovChainUpdate() {
 
 func updateTrelloMarkovChain() (bool, error) {
 	if *trelloApiKey == "" || *trelloApiToken == "" || *trelloBoardID == "" {
-		return true, fmt.Errorf("Lacking Trello API info, disabling feature")
+		return true, fmt.Errorf("Lacking Trello API info, disabling markov feature")
 	}
 	trello := trello_markov.NewTrelloCorpus(*trelloApiKey, *trelloApiToken)
 	corpus, err := trello.TextCorpus(*trelloBoardID)

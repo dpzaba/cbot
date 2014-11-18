@@ -1,7 +1,6 @@
 package trello_markov
 
 import (
-	"bytes"
 	"encoding/json"
 	"fmt"
 	"io/ioutil"
@@ -57,13 +56,13 @@ func (t *TrelloCorpus) TextCorpus(boardID string) (<-chan []byte, error) {
 	go func() {
 		defer close(c)
 		for _, card := range cards {
-			c <- card.Corpus()
+			card.Corpus(c)
 			comments, err := t.FetchCardComments(card.ID)
 			if err != nil {
 				return
 			}
 			for _, comment := range comments {
-				c <- comment.Corpus()
+				comment.Corpus(c)
 			}
 			//time.Sleep(250 * time.Millisecond)
 		}
@@ -83,16 +82,14 @@ type Card struct {
 	} `json:"checklists"`
 }
 
-func (c Card) Corpus() []byte {
-	var b bytes.Buffer
-	b.WriteString(strings.TrimSpace(c.Name) + " ")
-	b.WriteString(strings.TrimSpace(c.Desc) + " ")
+func (c Card) Corpus(b chan<- []byte) {
+	b <- []byte(strings.TrimSpace(c.Name))
+	b <- []byte(strings.TrimSpace(c.Desc))
 	for _, l := range c.Checklists {
 		for _, i := range l.Items {
-			b.WriteString(strings.TrimSpace(i.Name) + " ")
+			b <- []byte(strings.TrimSpace(i.Name))
 		}
 	}
-	return b.Bytes()
 }
 
 func (t *TrelloCorpus) FetchCards(boardID string) ([]Card, error) {
@@ -128,12 +125,10 @@ type CardComment struct {
 	} `json:"data"`
 }
 
-func (c CardComment) Corpus() []byte {
-	var b bytes.Buffer
+func (c CardComment) Corpus(b chan<- []byte) {
 	if !strings.HasPrefix(c.Data.Text, ":octocat:") {
-		b.WriteString(strings.TrimSpace(c.Data.Text) + " ")
+		b <- []byte(strings.TrimSpace(c.Data.Text))
 	}
-	return b.Bytes()
 }
 
 func (t *TrelloCorpus) FetchCardComments(cardID string) ([]CardComment, error) {
