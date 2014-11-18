@@ -64,7 +64,7 @@ func handleMessage(c *flowdock.Client, e flowdock.Event, responders []*MessageRe
 	direct := len(args) > 0 && args[0] == *prefix
 
 	// handle 'help' command
-	if len(args) == 1 || (len(args) > 1 && args[1] == "help") {
+	if direct && (len(args) == 1 || (len(args) > 1 && args[1] == "help")) {
 		helpTxt := bytes.NewBufferString("I understand:\n")
 		for _, r := range responders {
 			if r.Name[0] == '_' {
