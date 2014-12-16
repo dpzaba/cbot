@@ -8,10 +8,12 @@ class QA
   def block
     redis.set "cbot:qa:blocked", "true"
   end
+  alias_method :lock, :block
 
   def unblock
     redis.del "cbot:qa:blocked"
   end
+  alias_method :unlock, :unblock
 
   def deploy(branch_name)
     raise Blocked if blocked?
@@ -49,7 +51,7 @@ branch_name = ARGV.first
 qa = QA.new
 
 case branch_name
-when "block", "unblock"
+when "block", "unblock", "lock", "unlock"
   qa.send(branch_name)
   puts "QA has been #{branch_name}ed"
 when nil, ""
