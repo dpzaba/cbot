@@ -3,7 +3,7 @@ set -o errexit
 
 export GOPATH=/home/maxi/cbot/
 # cbot repo
-dir='/home/maxi/cbot/src/bitbucket.org/cabify/cbot'
+dir=$(cd ..; pwd)
 branch="master"
 
 cd $dir
@@ -11,9 +11,9 @@ cd $dir
 # fetch any new branches
 git fetch --all --quiet
 # switch to branch
-git checkout $branch --quiet 
+git checkout $branch --quiet
 # update to state of remote branch
-git reset --hard origin/$branch --quiet 
+git reset --hard origin/$branch --quiet
 
 make > /dev/null
 
