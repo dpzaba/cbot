@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 set -o errexit
 
-export GOPATH=/home/maxi/cbot/
+export GOPATH=/opt/cbot/
 # cbot repo
 dir=$(cd ..; pwd)
 branch="master"
