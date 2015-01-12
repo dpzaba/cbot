@@ -1,7 +1,7 @@
 BIN=cbot
 
 # Go parameters
-GOCMD=go
+GOCMD=/usr/local/go/bin/go
 GOBUILD=$(GOCMD) build
 GOCLEAN=$(GOCMD) clean
 GOINSTALL=$(GOCMD) install
