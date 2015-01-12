@@ -63,6 +63,9 @@ func (c *MessageResponder) Handle(direct bool, content string, args []string, re
 	go func() {
 		// listen to the output generated and pass it to the responder func
 		for o := range output {
+			if len(o) == 0 { // ignore blank lines
+				continue
+			}
 			if err := responder(o); err != nil {
 				log.Printf("Error responding to command: %v", err)
 				return
@@ -97,7 +100,7 @@ func runCommand(cmd *exec.Cmd) (<-chan string, error) {
 	go func() {
 		defer wg.Done()
 		for outScanner.Scan() {
-			output <- outScanner.Text()
+			output <- strings.TrimSpace(outScanner.Text())
 		}
 	}()
 	wg.Add(1)
