@@ -3,7 +3,7 @@
 set -o errexit
 
 app=$(./helpers/normalize-app-name $1)
-appDir=$(cd ../../deployables/$app; pwd)
+appDir=$(cd ../deployables/$app; pwd)
 
 cd $appDir
 
