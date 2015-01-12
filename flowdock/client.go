@@ -29,7 +29,7 @@ func (c *Client) PostJSON(endpoint string, data []byte) error {
 	}
 	if resp.StatusCode != 200 && resp.StatusCode != 201 {
 		body, _ := ioutil.ReadAll(resp.Body)
-		return fmt.Errorf("error POSTing to Rest API: %s. %s", resp.Status, string(body))
+		return fmt.Errorf("error POSTing '%s' to Rest API: %s. %s", string(data), resp.Status, string(body))
 	}
 	return nil
 }
