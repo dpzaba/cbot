@@ -8,6 +8,7 @@ fi
 
 # assign variables from args
 app=$(./helpers/normalize-app-name $1)
+appDir=$(cd ../deployables/${app}/; pwd)
 appEnv=$2
 branch=$3
 
@@ -51,7 +52,7 @@ if [ "$appEnv" == "production-us" ]; then
 fi;
 
 # cd into project
-cd "/home/maxi/cbot/$app"
+cd $appDir
 
 # Load RVM into a shell session *as a function*
 if [[ -s "$HOME/.rvm/scripts/rvm" ]] ; then
@@ -74,19 +75,19 @@ if ! git ls-remote --heads --exit-code origin $branch > /dev/null; then
 fi;
 
 # required so that cbot sends previous message now and not at EOF
-print "Starting deploy of $app to $appEnv on branch $branch\n\n" 
+print "Starting deploy of $app to $appEnv on branch $branch\n\n"
 
 # fetch any new branches
 git fetch --all --quiet
 # switch to branch
-git checkout $branch --quiet 
+git checkout $branch --quiet
 # update to state of remote branch
-git reset --hard origin/$branch --quiet 
+git reset --hard origin/$branch --quiet
 
 # ensure we're not behind master
 commitsBehind="$(git log --oneline ..origin/master | wc -l | tr -d ' ')"
 if [ "$commitsBehind" != "0" ]; then
- print ":heavy_exclamation_mark: $branch is $commitsBehind commits behind master, please merge in master. Continuing with deploy...\n\n" 
+ print ":heavy_exclamation_mark: $branch is $commitsBehind commits behind master, please merge in master. Continuing with deploy...\n\n"
 fi;
 
 # install any dependencies
