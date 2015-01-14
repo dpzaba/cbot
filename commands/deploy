@@ -111,7 +111,7 @@ deployStatus=$?
 endDeploy=$(date +%s)
 
 if [ $deployStatus -ne 0 ]; then
-  error "Error deploying, see $logFile"
+  error ":dizzy_face: Error deploying, see $logFile"
 fi;
 
 deployTime=$((endDeploy-startDeploy))
