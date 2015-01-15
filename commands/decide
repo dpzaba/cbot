@@ -7,7 +7,7 @@ if ARGV.length == 0
   exit
 end
 
-PREFIXES = ['Definitely', 'For sure', 'Obviously', 'Clearly', 'It has been decided:']
+PREFIXES = ['Definitely', 'For sure', 'Obviously', 'Clearly', 'It has been decided:', 'I say:']
 EXCLUDED = /\bor\b|\bbetween\b|,/
 
 choices = ARGV.join(' ').split(/\bor\b|,/).map{ |w| w.gsub(EXCLUDED, '').strip }.reject { |w| w == '' }
