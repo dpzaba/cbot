@@ -15,30 +15,31 @@ class QA
   end
   alias_method :unlock, :unblock
 
-  def deploy(branch_name)
+  def deploy(branch_name, &output)
     raise Blocked if blocked?
 
     sanitize! branch_name
 
-    # Run deploy
-    IO.popen "./deploy cabify_server staging-us #{branch_name}" do |f|
-      until f.eof?
-        s = f.gets
-        yield s if block_given?
-      end
-    end
-    # separate output into 2 messages
-    yield '' if block_given?
-    # Run rspec
-    IO.popen "VERBOSE=false ./rspec #{branch_name}" do |f|
-      until f.eof?
-        s = f.gets
-        yield s if block_given?
-      end
-    end
+    # Deploy and run tests concurrently
+    run("./deploy cabify_server staging-us #{branch_name}", "VERBOSE=false ./rspec #{branch_name}", &output)
   end
 
   private
+
+  def run(*commands, &output)
+    Thread.abort_on_exception = true
+    threads = commands.map do |command|
+      Thread.new do
+        IO.popen(command) do |f|
+          until f.eof?
+            s = f.gets
+            output.call(s) if output
+          end
+        end
+      end
+    end
+    threads.each { |t| t.join }
+  end
 
   def sanitize!(branch_name)
     unless branch_name =~ /\A[-\w]+\z/
