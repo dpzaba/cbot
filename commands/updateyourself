@@ -17,7 +17,7 @@ git reset --hard origin/$branch --quiet
 
 make > /dev/null
 
-echo "Updated myself"
+echo "Updated myself, like a boss :underage:"
 # reboot cbot in background
 at now 2> /dev/null <<EOF
 sleep 1
