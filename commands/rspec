@@ -41,10 +41,8 @@ if ! git ls-remote --heads --exit-code origin $branch > /dev/null; then
   error "Branch $branch not found"
 fi;
 
-if [ "$verbose" = true ]; then
-  # blank line required so that cbot sends previous message now and not at EOF
-  printf "Starting rspec of $app on branch $branch\n\n"
-fi
+# blank line required so that cbot sends previous message now and not at EOF
+printf "Starting rspec of $app on branch $branch\n\n"
 # write to logfile
 echo "############### $(date) - Starting rspec of $app on branch $branch" >> $logFile
 
