@@ -74,14 +74,13 @@ testStatus=${PIPESTATUS[0]}
 endTest=$(date +%s)
 
 testTime=$((endTest-startTest))
-if [ "$verbose" = true ]; then
-  echo "Tested '${app}' on branch ${branch} in ${testTime}s"
-fi
+output="${branch}: $(grep -E '[0-9]+ examples, [0-9]+ failures, [0-9]+ pending' $tmpOutput) in ${testTime}s"
 if [ $testStatus -eq 0 ]; then
-  echo ":+1: ${branch}: $(grep -E '[0-9]+ examples, [0-9]+ failures, [0-9]+ pending' $tmpOutput)"
+  echo ":+1: ${output}"
 else
-  echo ":-1: ${branch}: $(grep -E '[0-9]+ examples, [0-9]+ failures, [0-9]+ pending' $tmpOutput)"
+  echo ":-1: ${output}"
   if [ "$verbose" = true ]; then
+    # send as separate message
     echo ""
     # output tmp file, removing blank lines so cbot only sends 1 message
     grep -e '^$' -v $tmpOutput
