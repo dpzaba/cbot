@@ -75,7 +75,7 @@ testTime=$((endTest-startTest))
 echo "Tested '${app}' on branch ${branch} in ${testTime}s"
 if [ $testStatus -eq 0 ]
 then
-  echo ":+1: All tests passed!"
+  echo ":+1: $(grep -E '[0-9]+ examples, [0-9]+ failures, [0-9]+ pending' $tmpOutput)"
 else
   echo ":-1: $(grep -E '[0-9]+ examples, [0-9]+ failures, [0-9]+ pending' $tmpOutput)"
   echo ""
