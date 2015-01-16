@@ -1,0 +1,84 @@
+#!/usr/bin/env bash
+#
+# Run rspec tests on cabify_server. Will run on master branch unless branch given as 1st arg
+#
+# Usage: rspec [branch]
+#
+set -o errexit
+
+# assign variables from args
+app="cabify_server"
+appDir=$(cd ../testables/${app}/; pwd)
+branch=${1:-master}
+
+logFile="/var/log/cbot/${app}_rspec.log"
+
+# print error (if given) then exit with error status
+error ()
+{
+  if [ "$1" != "" ]; then
+    printf "$1"
+  fi;
+  exit 1
+}
+
+# cd into project
+cd $appDir
+
+# Load RVM into a shell session *as a function*
+if [[ -s "$HOME/.rvm/scripts/rvm" ]] ; then
+  set +o errexit
+  source "$HOME/.rvm/scripts/rvm"
+  set -o errexit
+else
+  error "ERROR: An RVM installation was not found"
+fi
+
+# assert that the branch exists
+if ! git ls-remote --heads --exit-code origin $branch > /dev/null; then
+  error "Branch $branch not found"
+fi;
+
+# required so that cbot sends previous message now and not at EOF
+printf "Starting rspec of $app on branch $branch\n\n"
+# write to logfile
+echo "############### $(date) - Starting rspec of $app on branch $branch" >> $logFile
+
+# fetch any new branches
+git fetch --all --quiet
+# switch to branch
+git checkout $branch --quiet
+# update to state of remote branch
+git reset --hard origin/$branch --quiet
+
+# install any dependencies
+bundle check > /dev/null 2>&1 || bundle install > /dev/null 2>&1
+
+## tmp rspec output file
+tmpOutput=/tmp/cbot_rspec.out
+
+# do not exit if rspec command fails
+set +o errexit
+
+# truncate tmp file
+> $tmpOutput
+
+# run rspec, saving output to logfile and temp file
+# return exit code of first command
+# http://stackoverflow.com/questions/1221833/bash-pipe-output-and-capture-exit-status
+startTest=$(date +%s)
+bundle exec rspec specs --format progress 2>&1 | tee -a $logFile $tmpOutput >/dev/null
+testStatus=${PIPESTATUS[0]}
+endTest=$(date +%s)
+
+testTime=$((endTest-startTest))
+echo "Tested '${app}' on branch ${branch} in ${testTime}s"
+if [ $testStatus -eq 0 ]
+then
+  echo ":+1: All tests passed!"
+else
+  echo ":-1: Some tests failed."
+  echo ""
+  # output tmp file, removing blank lines so cbot only sends 1 message
+  grep -e '^$' -v $tmpOutput
+fi

@@ -1,0 +1,5 @@
+# Ignore everything in this directory
+# See the commands/rspec command for more info
+*
+# Except this file
+!.gitignore
