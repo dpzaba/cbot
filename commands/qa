@@ -26,6 +26,13 @@ class QA
         yield s if block_given?
       end
     end
+    # Run rspec
+    IO.popen "VERBOSE=false ./rspec #{branch_name}" do |f|
+      until f.eof?
+        s = f.gets
+        yield s if block_given?
+      end
+    end
   end
 
   private

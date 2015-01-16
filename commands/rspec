@@ -10,6 +10,8 @@ set -o errexit
 app="cabify_server"
 appDir=$(cd ../testables/${app}/; pwd)
 branch=${1:-master}
+# if verbose=false, will only output number of passed/failures
+verbose=${VERBOSE:-true}
 
 logFile="/var/log/cbot/${app}_rspec.log"
 
@@ -39,8 +41,10 @@ if ! git ls-remote --heads --exit-code origin $branch > /dev/null; then
   error "Branch $branch not found"
 fi;
 
-# required so that cbot sends previous message now and not at EOF
-printf "Starting rspec of $app on branch $branch\n\n"
+if [ "$verbose" = true ]; then
+  # blank line required so that cbot sends previous message now and not at EOF
+  printf "Starting rspec of $app on branch $branch\n\n"
+fi
 # write to logfile
 echo "############### $(date) - Starting rspec of $app on branch $branch" >> $logFile
 
@@ -72,13 +76,16 @@ testStatus=${PIPESTATUS[0]}
 endTest=$(date +%s)
 
 testTime=$((endTest-startTest))
-echo "Tested '${app}' on branch ${branch} in ${testTime}s"
-if [ $testStatus -eq 0 ]
-then
-  echo ":+1: $(grep -E '[0-9]+ examples, [0-9]+ failures, [0-9]+ pending' $tmpOutput)"
+if [ "$verbose" = true ]; then
+  echo "Tested '${app}' on branch ${branch} in ${testTime}s"
+fi
+if [ $testStatus -eq 0 ]; then
+  echo ":+1: ${branch}: $(grep -E '[0-9]+ examples, [0-9]+ failures, [0-9]+ pending' $tmpOutput)"
 else
-  echo ":-1: $(grep -E '[0-9]+ examples, [0-9]+ failures, [0-9]+ pending' $tmpOutput)"
-  echo ""
-  # output tmp file, removing blank lines so cbot only sends 1 message
-  grep -e '^$' -v $tmpOutput
+  echo ":-1: ${branch}: $(grep -E '[0-9]+ examples, [0-9]+ failures, [0-9]+ pending' $tmpOutput)"
+  if [ "$verbose" = true ]; then
+    echo ""
+    # output tmp file, removing blank lines so cbot only sends 1 message
+    grep -e '^$' -v $tmpOutput
+  fi
 fi
