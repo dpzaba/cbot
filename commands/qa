@@ -36,6 +36,7 @@ class QA
             output.call(s) if output
           end
         end
+        output.call('') # add blank line so cbot sends the message
       end
     end
     threads.each { |t| t.join }
