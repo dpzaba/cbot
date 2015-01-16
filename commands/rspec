@@ -77,7 +77,7 @@ if [ $testStatus -eq 0 ]
 then
   echo ":+1: All tests passed!"
 else
-  echo ":-1: Some tests failed."
+  echo ":-1: $(grep -E '[0-9]+ examples, [0-9]+ failures, [0-9]+ pending' $tmpOutput)"
   echo ""
   # output tmp file, removing blank lines so cbot only sends 1 message
   grep -e '^$' -v $tmpOutput
