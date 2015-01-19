@@ -21,12 +21,12 @@ class QA
     sanitize! branch_name
 
     # Deploy and run tests concurrently
-    run("./deploy cabify_server staging-us #{branch_name}", "VERBOSE=false ./rspec #{branch_name}", &output)
+    run_async("./deploy cabify_server staging-us #{branch_name}", "VERBOSE=false ./rspec #{branch_name}", &output)
   end
 
   private
 
-  def run(*commands, &output)
+  def run_async(*commands, &output)
     Thread.abort_on_exception = true
     threads = commands.map do |command|
       Thread.new do
@@ -36,7 +36,7 @@ class QA
             output.call(s) if output
           end
         end
-        output.call('') # add blank line so cbot sends the message
+        output.call('') # add blank line so cbot sends the message instead of waiting for process to finish
       end
     end
     threads.each { |t| t.join }
