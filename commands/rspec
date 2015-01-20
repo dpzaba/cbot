@@ -56,6 +56,10 @@ git reset --hard origin/$branch --quiet
 # install any dependencies
 bundle check > /dev/null 2>&1 || bundle install > /dev/null 2>&1
 
+# clobber assets. This is required for unknown reasons, if not performed
+# generated sprites are not served correctly during the spec/requests tests...?
+bundle exec rake assets:clobber > /dev/null 2>&1
+
 ## tmp rspec output file
 tmpOutput=/tmp/cbot_rspec.out
 
