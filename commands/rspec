@@ -6,6 +6,21 @@
 #
 set -o errexit
 
+# setup lockfile to avoid multiple rspecs running at once
+lockFile=/tmp/rspec.lock
+# quit if lockfile exits
+if [ -f "$lockFile" ]; then
+  echo "rspec is being running by another command, exiting..."
+  exit 0
+fi
+# remove lockfile on exit
+function cleanup {
+  rm  -f $lockFile
+}
+trap cleanup EXIT
+# create lockfile
+date > $lockFile
+
 # assign variables from args
 app="cabify_server"
 appDir=$(cd ../testables/${app}/; pwd)
