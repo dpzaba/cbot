@@ -11,7 +11,6 @@ import (
 	"bytes"
 
 	"bitbucket.org/cabify/cbot/flowdock"
-	"bitbucket.org/cabify/cbot/trello_markov"
 )
 
 var (
@@ -19,12 +18,6 @@ var (
 	token       = flag.String("token", "", "rest token")               // Flowdock rest token
 	flows       = flag.String("flows", "", "flows, separted by comma") // of form cabify/test,cabify/other
 	commandsDir = flag.String("c", "commands", "commands directory")   // directory of the executable commands
-
-	trelloApiKey   = flag.String("trelloKey", "", "Trello API Key")
-	trelloApiToken = flag.String("trelloToken", "", "Trello API Token")
-	trelloBoardID  = flag.String("trelloBoard", "wlJR9jXV", "Trello Board ID used for corpus")
-
-	trelloMarkovChain *trello_markov.Chain = nil
 )
 
 func main() {
@@ -45,8 +38,6 @@ func main() {
 	for _, responder := range responders {
 		log.Printf("Registered <%s> responder", responder.Name)
 	}
-	// setup trello markov updater
-	go recurrentTrelloMarkovChainUpdate()
 	startStream(c, rooms, responders)
 }
 
@@ -97,12 +88,7 @@ func handleMessage(c *flowdock.Client, e flowdock.Event, responders []*MessageRe
 	// handle case when a direct message wasn't handled
 	if !directHandled {
 		log.Printf("Unhandled direct message: %s", content)
-		var resp string
-		if trelloMarkovChain == nil {
-			resp = "Sorry, didn't recognize that command. Try 'cbot help'"
-		} else {
-			resp = trelloMarkovChain.Generate(32)
-		}
+		resp := "Sorry, didn't recognize that command. Try 'cbot help'"
 		comment := flowdock.NewComment(e.ID, e.Flow, *prefix, resp)
 		if err := c.PostEvent(*comment); err != nil {
 			log.Println(err)
@@ -147,41 +133,4 @@ func startStream(c *flowdock.Client, flows []string, responders []*MessageRespon
 			log.Printf("Stream Error: %v", err)
 		}
 	}
-}
-
-func recurrentTrelloMarkovChainUpdate() {
-	var runUpdate = func() bool {
-		stop, err := updateTrelloMarkovChain()
-		if err != nil {
-			log.Printf("Error updating Trello Markov: %v", err)
-		} else {
-			log.Println("Updated Trello Markov Chain")
-		}
-		return stop
-	}
-	runUpdate()
-	ticker := time.NewTicker(12 * time.Hour)
-	for _ = range ticker.C {
-		if runUpdate() {
-			ticker.Stop()
-			break
-		}
-	}
-}
-
-func updateTrelloMarkovChain() (bool, error) {
-	if *trelloApiKey == "" || *trelloApiToken == "" || *trelloBoardID == "" {
-		return true, fmt.Errorf("Lacking Trello API info, disabling markov feature")
-	}
-	trello := trello_markov.NewTrelloCorpus(*trelloApiKey, *trelloApiToken)
-	corpus, err := trello.TextCorpus(*trelloBoardID)
-	if err != nil {
-		return false, err
-	}
-	chain := trello_markov.NewChain(3)
-	for b := range corpus {
-		chain.Build(bytes.NewBuffer(b))
-	}
-	trelloMarkovChain = chain
-	return false, nil
 }
