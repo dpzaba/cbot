@@ -10,13 +10,14 @@ set -o errexit
 lockFile=/tmp/rspec.lock
 # quit if lockfile exits
 if [ -f "$lockFile" ]; then
-  echo "rspec is being running by another command, try again later"
+  echo "rspec is already running, try again later"
   exit 0
 fi
 # remove lockfile on exit
 function cleanup {
-  rm  -f $lockFile
+  rm -f "$lockFile"
 }
+# remove lockFile on exit
 trap cleanup EXIT
 # create lockfile
 date > $lockFile
