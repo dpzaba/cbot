@@ -94,7 +94,7 @@ testStatus=${PIPESTATUS[0]}
 endTest=$(date +%s)
 
 testTime=$((endTest-startTest))
-output="${branch}: $(grep -E '[0-9]+ examples?, [0-9]+ failures?, [0-9]+ pending' $tmpOutput) in ${testTime}s"
+output="${branch}: $(grep -E '[0-9]+ examples?, [0-9]+ failures?' $tmpOutput) in ${testTime}s"
 if [ $testStatus -eq 0 ]; then
   echo ":+1: ${output}"
 else
