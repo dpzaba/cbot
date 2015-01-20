@@ -18,7 +18,7 @@ function cleanup {
   rm -f "$lockFile"
 }
 # remove lockFile on exit
-trap cleanup EXIT INT TERM
+trap cleanup EXIT
 # create lockfile
 date > $lockFile
 
@@ -106,3 +106,5 @@ else
     grep -e '^$' -v $tmpOutput
   fi
 fi
+
+cleanup
