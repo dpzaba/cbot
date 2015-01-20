@@ -89,7 +89,7 @@ set +o errexit
 # return exit code of first command
 # http://stackoverflow.com/questions/1221833/bash-pipe-output-and-capture-exit-status
 startTest=$(date +%s)
-bundle exec rspec spec --format progress 2>&1 | tee -a $logFile $tmpOutput >/dev/null
+bundle exec rspec spec --profile --format progress 2>&1 | tee -a $logFile $tmpOutput >/dev/null
 testStatus=${PIPESTATUS[0]}
 endTest=$(date +%s)
 
