@@ -1,0 +1,35 @@
+#!/usr/bin/env ruby
+
+# Pass the blame without actually having to
+
+exit unless ARGV.length > 0 && ARGV.first.length > 0
+
+blameables = /\b
+  (adam|michael|richard)
+\b/xi
+
+blameables.match(ARGV.first) do |match|
+  blamed = match[1].downcase.capitalize
+  censored = blamed[0] + ('*' * blamed[1..-1].length)
+  puts [
+    "Good thing #{blamed} is gone!",
+    "Who is #{blamed} :grey_question:",
+    "Unknown user #{blamed} :grey_question:",
+    "#{blamed} has been deleted from my memory.",
+    "I blame #{blamed} :dart:",
+    "It's #{blamed}'s fault.",
+    "Everything is #{blamed}'s fault.",
+    "#{blamed} did it.",
+    "#{blamed} broke it.",
+    "Was #{blamed}'s fault.",
+    "#{blamed}--",
+    "#{blamed} :-1:",
+    "Good riddance with #{blamed} :broken_heart:.",
+    "#{censored} shall not be named.",
+    "I am not allowed to mention of #{censored}.",
+    "We do not speak of #{censored}.",
+    "#{blamed} :poop:",
+    "¡VIVA #{blamed.upcase}!",
+    "#{blamed} :heart:.",
+  ].sample
+end
