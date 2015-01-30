@@ -100,7 +100,7 @@ func runCommand(cmd *exec.Cmd) (<-chan string, error) {
 	go func() {
 		defer wg.Done()
 		for outScanner.Scan() {
-			output <- strings.TrimSpace(outScanner.Text())
+			output <- strings.TrimRightFunc(outScanner.Text(), unicode.IsSpace)
 		}
 	}()
 	wg.Add(1)
