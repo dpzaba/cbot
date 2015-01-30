@@ -1,6 +1,7 @@
 package main
 
 import (
+	"bufio"
 	"fmt"
 	"io/ioutil"
 	"log"
@@ -8,8 +9,7 @@ import (
 	"path/filepath"
 	"strings"
 	"sync"
-
-	"bufio"
+	"unicode"
 )
 
 // InitMessageResponders scans given directory and creates MessageResponders from the exectuable files
