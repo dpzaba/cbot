@@ -1,0 +1,25 @@
+#!/usr/bin/env ruby
+
+# Because linux rules !
+
+exit unless ARGV.length > 0 && ARGV.first.length > 0
+
+linux_patterns = /\b
+  (linux)
+\b/xi
+
+linux_patterns.match(ARGV.first) do |match|
+  linux_word = match[1].downcase.capitalize
+
+  puts [
+    "Yeah! #{linux_word} rules",
+    "I love #{linux_word} too",
+    "#{linux_word} is the best",
+    "#{linux_word}++",
+    "#{linux_word} :heart:",
+
+    # Linus quotes
+    "Linux hackers are funny people: They count the time in patchlevels.",
+    "My name is Linus, and I am your God."
+  ].sample
+end
