@@ -5,7 +5,7 @@
 exit unless ARGV.length > 0 && ARGV.first.length > 0
 
 linux_patterns = /\b
-  (linux)
+  (linux|linus)
 \b/xi
 
 linux_patterns.match(ARGV.first) do |match|
