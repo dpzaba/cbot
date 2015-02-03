@@ -2,7 +2,7 @@
 
 current_flow = ENV['CURRENT_FLOW']
 if current_flow != '57785fc4-5e2f-4819-8db5-32d1ca055024'
-  puts "I won't run qa from the '#{current_flow}' flow"
+  puts "I won't run qa from this flow"
   puts "Please call me from 'Product Deploys'"
   exit
 end
