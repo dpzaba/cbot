@@ -1,0 +1,14 @@
+#!/usr/bin/env ruby
+
+require 'net/http'
+require 'json'
+
+uri = URI('https://ajax.googleapis.com/ajax/services/search/images')
+uri.query = URI.encode_www_form(v: "1.0", rsz: "8", q: "fish")
+res = Net::HTTP.get_response(uri)
+
+# get url
+result = JSON.parse(res.body)
+
+# return url
+puts result["responseData"]["results"].sample["url"]
