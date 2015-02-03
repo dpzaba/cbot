@@ -1,6 +1,13 @@
 #!/usr/bin/env bash
 set -o errexit
 
+$current_flow=$CURRENT_FLOW
+if [ "$current_flow" != "Product Deploys" ] ; then
+  echo "I won't run deploy from the '$current_flow' flow"
+  echo "Please call me from 'Product Deploys'"
+  exit 1
+fi
+
 if [ "$#" -ne 3 ]; then
   echo "Please provide <app> <environment> <branch>"
   exit 1

@@ -6,6 +6,13 @@
 #
 set -o errexit
 
+$current_flow=$CURRENT_FLOW
+if [ "$current_flow" != "Product Deploys" ] ; then
+  echo "I won't run rspec from the '$current_flow' flow"
+  echo "Please call me from 'Product Deploys'"
+  exit 1
+fi
+
 # setup lockfile to avoid multiple rspecs running at once
 lockFile=/tmp/rspec.lock
 # quit if lockfile exits

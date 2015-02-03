@@ -1,5 +1,12 @@
 #!/usr/bin/env ruby
 
+current_flow = ENV['CURRENT_FLOW']
+if current_flow != 'Product Deploys'
+  puts "I won't run qa from the '#{current_flow}' flow"
+  puts "Please call me from 'Product Deploys'"
+  exit
+end
+
 require "redis"
 
 class QA
