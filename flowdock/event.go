@@ -65,6 +65,19 @@ func (c *Client) PostEvent(e Event) error {
 	return c.PostJSON(endpoint.String(), data)
 }
 
+func (c *Client) GetUserById(id uint) (User, error) {
+	endpoint, _ := url.Parse(restURL)
+	endpoint.User = url.User(c.token) // set token as BasicAuth user
+	// depending on if this is a reply or message, the endpoint varies
+	endpoint.Path = "user/" + string(id)
+
+	user := &User{}
+	body, error := c.GetJSON(endpoint.String())
+	json.Unmarshal(body, &user)
+
+	return user, nil
+}
+
 // {"event":"message","tags":[],"uuid":"GfcU296O-g6rdUU4","id":11295,"flow":"0adc400f-ca1c-434b-81ee-c932f4fba2dd","content":"cool no hurries","sent":1412938667994,"app":"chat","attachments":[],"user":"106208"}
 // {"event":"activity.user","tags":[],"uuid":null,"persist":false,"id":11301,"flow":"0adc400f-ca1c-434b-81ee-c932f4fba2dd","content":{"last_activity":1412938720917},"sent":1412938741475,"app":null,"attachments":[],"user":"104062"}
 
@@ -79,6 +92,15 @@ type Event struct {
 	UUID     string           `json:"uuid,omitempty"`
 	Tags     []string         `json:"tags,omitempty"`
 	//	Sent     uint             `json:"sent,omitempty"`
+}
+
+type User struct {
+	Email   string `json:email`
+	Name    string `json:name`
+	Avatar  string `json:avatar`
+	Id      uint   `json:id`
+	Website string `json:website`
+	Nick    string `json:nick`
 }
 
 // StringContent sets the content to a string
