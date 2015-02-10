@@ -80,7 +80,7 @@ func handleMessage(c *flowdock.Client, e flowdock.Event, responders []*MessageRe
 		os.Setenv("CURRENT_USER_EMAIL", user.Email)
 		os.Setenv("CURRENT_USER_NICK", user.Nick)
 		os.Setenv("CURRENT_USER_NAME", user.Name)
-		os.Setenv("CURRENT_USER_ID", user.Id)
+		os.Setenv("CURRENT_USER_ID", string(user.Id))
 
 		caught, err := responder.Handle(direct, content, args[1:], func(response string) error {
 			// handle the output of the command by replying to the message

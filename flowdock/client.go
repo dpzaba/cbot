@@ -35,19 +35,19 @@ func (c *Client) PostJSON(endpoint string, data []byte) error {
 }
 
 func (c *Client) GetJSON(endpoint string) (string, error) {
-	req, err := http.NewRequest("GET", endpoint)
+	req, err := http.NewRequest("GET", endpoint, nil)
 	if err != nil {
-		return nil, err
+		return "", err
 	}
 	req.Header.Set("Content-Type", "application/json")
 	resp, err := (&http.Client{}).Do(req)
 	if err != nil {
-		return nil, err
+		return "", err
 	}
+	body, _ := ioutil.ReadAll(resp.Body)
 	if resp.StatusCode != 200 && resp.StatusCode != 201 {
-		body, _ := ioutil.ReadAll(resp.Body)
-		return nil, fmt.Errorf("error Getting '%s' to Rest API: %s. %s", string(endpoint), resp.Status, string(body))
+		return "", fmt.Errorf("error Getting '%s' to Rest API: %s. %s", string(endpoint), resp.Status, string(body))
 	} else {
-		return string(body)
+		return string(body), nil
 	}
 }

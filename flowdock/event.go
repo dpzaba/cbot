@@ -65,15 +65,15 @@ func (c *Client) PostEvent(e Event) error {
 	return c.PostJSON(endpoint.String(), data)
 }
 
-func (c *Client) GetUserById(id uint) (User, error) {
+func (c *Client) GetUserById(id string) (User, error) {
 	endpoint, _ := url.Parse(restURL)
 	endpoint.User = url.User(c.token) // set token as BasicAuth user
 	// depending on if this is a reply or message, the endpoint varies
-	endpoint.Path = "user/" + string(id)
+	endpoint.Path = "user/" + id
 
-	user := &User{}
-	body, error := c.GetJSON(endpoint.String())
-	json.Unmarshal(body, &user)
+	user := User{}
+	body, _ := c.GetJSON(endpoint.String())
+	json.Unmarshal([]byte(body), &user)
 
 	return user, nil
 }
