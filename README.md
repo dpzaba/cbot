@@ -28,7 +28,10 @@ Lines 1-2 will be sent as a reply, then line 4 as a separate reply.
   Every command is called with some environment
   You can get some variables with the message
   ```
-    CURRENT_FLOW -> "Flow ID"
-    CURRENT_USER -> "User ID"
-    CURRENT_USERNAME -> "UserName"
+  CURRENT_FLOW
+  CURRENT_USER_AVATAR
+  CURRENT_USER_EMAIL
+  CURRENT_USER_NICK
+  CURRENT_USER_NAME
+  CURRENT_USER_ID
   ```
