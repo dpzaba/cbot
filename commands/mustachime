@@ -1,0 +1,3 @@
+#!/usr/bin/env bash
+
+echo "http://mustachify.me/?src=$CURRENT_USER_AVATAR"
