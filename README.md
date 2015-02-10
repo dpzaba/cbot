@@ -24,14 +24,16 @@ Lines 1-2 will be sent as a reply, then line 4 as a separate reply.
 
  * Executables which don't begin with `_` are only run when cbot receives a command with the executable filename. Eg there's an executable called `deploy`, so if the chat message `cbot deploy first second third` is seen, the `deploy` executable will be run with arg1 = first, arg2 = second, etc
 
- #### Environment
-  Every command is called with some environment
-  You can get some variables with the message
-  ```
-  CURRENT_FLOW
-  CURRENT_USER_AVATAR
-  CURRENT_USER_EMAIL
-  CURRENT_USER_NICK
-  CURRENT_USER_NAME
-  CURRENT_USER_ID
-  ```
+##### Environment
+
+ * Every command is called with some environment
+ * You can get some variables with the message
+
+```
+CURRENT_FLOW
+CURRENT_USER_AVATAR
+CURRENT_USER_EMAIL
+CURRENT_USER_NICK
+CURRENT_USER_NAME
+CURRENT_USER_ID
+```
