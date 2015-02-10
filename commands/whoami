@@ -1,3 +1,3 @@
 #!/usr/bin/env bash
 
-echo "Hello $CURRENT_USERNAME"
+echo "Hello $CURRENT_USER_NICK"
