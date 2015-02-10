@@ -73,6 +73,8 @@ func handleMessage(c *flowdock.Client, e flowdock.Event, responders []*MessageRe
 	directHandled := !direct
 	for _, responder := range responders {
 		os.Setenv("CURRENT_FLOW", e.Flow)
+		os.Setenv("CURRENT_USER", e.User)
+		os.Setenv("CURRENT_USERNAME", e.UserName)
 		caught, err := responder.Handle(direct, content, args[1:], func(response string) error {
 			// handle the output of the command by replying to the message
 			comment := flowdock.NewComment(e.ID, e.Flow, *prefix, response)
