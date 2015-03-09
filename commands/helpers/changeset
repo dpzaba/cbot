@@ -8,8 +8,8 @@ appDir=$(cd ../deployables/$app; pwd)
 cd $appDir
 
 git fetch --all --quiet
-tag1="$(git tag --list production-us-* | tail -2 | head -1)"
-tag2="$(git tag --list production-us-* | tail -1)"
+tag1="$(git tag --list production-* | tail -2 | head -1)"
+tag2="$(git tag --list production-* | tail -1)"
 url="https://github.com/MaxiMobility/$app/compare/$tag1...$tag2"
 
 echo "This is new on production: $url"

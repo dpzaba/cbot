@@ -54,7 +54,7 @@ if [ "$appEnv" == "" ]; then
 fi;
 
 # assert environment is not production
-if [ "$appEnv" == "production-us" ]; then
+if [ "$appEnv" == "production" ]; then
   error "Whoooa! Cannot deploy to $appEnv... yet"
 fi;
 
