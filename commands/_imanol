@@ -1,0 +1,30 @@
+#!/usr/bin/env ruby
+# -*- coding: utf-8 -*-
+
+# Because we miss Imanol!
+
+exit unless ARGV.length > 0 && ARGV.first.length > 0
+
+linux_patterns = /\b
+  (imanol)
+\b/xi
+
+linux_patterns.match(ARGV.first) do |match|
+  imanol_word = match[1].downcase.capitalize
+
+  puts [
+    "#{imanol_word}, no funsiona la aplicasion",
+    "#{imanol_word}, se volteó el aplicativo",
+    "#{imanol_word} ve la vida de color plomiso",
+
+    "#{imanol_word}: Real men code in C",
+    "We need to refactor this #{imanol_word} shit",
+    "'I can see the smoke over the marketing department' by #{imanol_word}",
+
+    "#{imanol_word}: Let's buy some users!",
+    "Don't blame #{imanol_word}, it's Jenkins fault!",
+    "This is definitely an android threading issue!",
+    "Haters gonna hate #{imanol_word}!",
+    "#{imanol_word}: Google have monkeys programming the Android API, it sucks!"
+  ].sample
+end
