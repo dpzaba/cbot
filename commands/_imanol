@@ -9,6 +9,10 @@ linux_patterns = /\b
   (imanol)
 \b/xi
 
+images = {
+  marketing_money: 'http://i.imgur.com/rL9jWbL.gif'
+}
+
 linux_patterns.match(ARGV.first) do |match|
   imanol_word = match[1].downcase.capitalize
 
@@ -25,6 +29,8 @@ linux_patterns.match(ARGV.first) do |match|
     "Don't blame #{imanol_word}, it's Jenkins fault!",
     "This is definitely an android threading issue!",
     "Haters gonna hate #{imanol_word}!",
-    "#{imanol_word}: Google have monkeys programming the Android API, it sucks!"
+    "#{imanol_word}: Google have monkeys programming the Android API, it sucks!",
+
+    "Cabify's marketing department #{images[:marketing_money]}"
   ].sample
 end
