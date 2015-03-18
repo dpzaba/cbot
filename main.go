@@ -43,6 +43,10 @@ func main() {
 
 // handleMessage receives an event and passes it to the MessageResponders
 func handleMessage(c *flowdock.Client, e flowdock.Event, responders []*MessageResponder) {
+	if e.UserName == "cbot" {
+		return
+	}
+
 	content, args, err := parseMessageContent(e)
 	if err != nil {
 		log.Printf("Error parsing message: %v", err)
@@ -80,7 +84,6 @@ func handleMessage(c *flowdock.Client, e flowdock.Event, responders []*MessageRe
 	os.Setenv("CURRENT_USER_NICK", user.Nick)
 	os.Setenv("CURRENT_USER_NAME", user.Name)
 	os.Setenv("CURRENT_USER_ID", string(user.Id))
-	os.Setenv("FLOWDOCK_EVENT", fmt.Sprintf("%+v", e))
 
 	for _, responder := range responders {
 
