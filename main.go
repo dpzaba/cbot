@@ -80,6 +80,7 @@ func handleMessage(c *flowdock.Client, e flowdock.Event, responders []*MessageRe
 	os.Setenv("CURRENT_USER_NICK", user.Nick)
 	os.Setenv("CURRENT_USER_NAME", user.Name)
 	os.Setenv("CURRENT_USER_ID", string(user.Id))
+	os.Setenv("FLOWDOCK_EVENT", fmt.Sprintf("%+v", e))
 
 	for _, responder := range responders {
 

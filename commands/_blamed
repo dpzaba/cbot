@@ -10,10 +10,13 @@ exit unless ARGV.length > 0 && ARGV.first.length > 0
   "CURRENT_USER_EMAIL",
   "CURRENT_USER_NICK",
   "CURRENT_USER_NAME",
-  "CURRENT_USER_ID"
+  "CURRENT_USER_ID",
+  "FLOWDOCK_EVENT"
 ].each do |k|
   puts "ENV['#{k}'] # => #{ENV[k]}"
 end
+
+exit
 
 blameables = /\b
   (adam|michael|richard)
