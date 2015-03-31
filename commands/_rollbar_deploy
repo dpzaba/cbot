@@ -8,6 +8,4 @@ if s =~ %r{Deploy to (staging|production) https://rollbar\.com/deploy/\d+/}
   when "production"
     puts `./helpers/changeset`
   end
-elsif s =~ /Deploy to (staging|production)/
-  puts s.split(//).inspect
 end
