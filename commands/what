@@ -20,10 +20,10 @@ def what_day_is_it_today?
     [12,  7],
     [12, 24]
   ]
-  if wday == 5
-    puts "It is Friday! http://res.cloudinary.com/hanxcneoq/image/upload/v1427890057/macarena_dlql38.gif"
+  if [0, 5, 6].include?(wday)
+    puts "It is #{wdays[wday]}! http://res.cloudinary.com/hanxcneoq/image/upload/v1427890057/macarena_dlql38.gif"
   elsif bank_holiday_eves.include?([now.month, now.day])
-    puts "It is #{wdays[wday]} but tomorrow it's bank hollidays! http://res.cloudinary.com/hanxcneoq/image/upload/v1427890057/macarena_dlql38.gif"
+    puts "It is #{wdays[wday]} but tomorrow it's bank holiday! http://res.cloudinary.com/hanxcneoq/image/upload/v1427890057/macarena_dlql38.gif"
   else
     puts "It is #{wdays[wday]} :("
   end
