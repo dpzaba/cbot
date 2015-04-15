@@ -10,7 +10,7 @@ res  = Net::HTTP.get_response(uri)
 
 html = res.body.force_encoding("UTF-8")
 
-if %r{<h3><a href="[^"]+">(?<html_escaped_title>[^<]+)</a></h3> </div> <div class="bodytype"> <p class="\w+"><img( alt="image")? src="(?<image_src>[^"]+)"/>(<br/>(<em>[^<]+</em>|<i>[^<]+</i>))?</p>} =~ html
+if %r{<h3><a href="[^"]+">(?<html_escaped_title>[^<]+)</a></h3> </div> <div class="bodytype"> <p class="\w+"><img( alt="image")? src="(?<image_src>[^"]+)"/?>(<br/>(<em>[^<]+</em>|<i>[^<]+</i>))?</p>} =~ html
   puts CGI.unescapeHTML(html_escaped_title)
   puts image_src
 else
