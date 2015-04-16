@@ -71,6 +71,7 @@ else
 fi
 
 # assert that git is clean
+rm -f "app/assets/images/profile/icons-*.png" # make assets:clobber is generating this?
 dirty="$(git status --porcelain)"
 if [ -n "$dirty" ]; then
   error "Dirty git directory $(pwd): $dirty"
