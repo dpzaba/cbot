@@ -7,7 +7,7 @@ The `commands` directory contains executables which are run in response to chat 
 
 The executable is passed the chat message as its argument(s). Any output on STDOUT and STDERR are sent as Flowdock replies to the message. 
 
-Blank newlines divide multiple replies. Eg
+Blank newlines divide multiple replies. Eg:
 
 ```
 1  hello
