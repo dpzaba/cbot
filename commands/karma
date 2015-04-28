@@ -132,7 +132,9 @@ if %w[incr decr score rank rem].include?(cmd) && nickname && !nickname.empty?
 elsif %w[winners losers range].include?(cmd)
   Karma.new.send(cmd)
 else
-  puts "```Usage:"
-  puts "      cbot karma [incr|decr|score|rank] <nickname>"
-  puts "      cbot karma [winners|losers]```"
+  puts "```"
+  puts "Usage:"
+  puts "  cbot karma [incr|decr|score|rank] <nickname>"
+  puts "  cbot karma [winners|losers]"
+  puts "```"
 end
