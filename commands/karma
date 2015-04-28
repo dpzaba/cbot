@@ -12,14 +12,14 @@ class Karma
     karma_was = muted { score }
 
     count = redis.zrem redis_key, normalized_nickname
-    say "    #{@nickname} has just been removed, (s)he had #{karma_was.to_i} points of karma"
+    say "```#{@nickname} has just been removed, (s)he had #{karma_was.to_i} points of karma```"
 
     count
   end
 
   def incr(by = 1)
     karma = redis.zincrby redis_key, by, normalized_nickname
-    say "    New karma for #{@nickname} is #{karma.to_i}"
+    say "```New karma for #{@nickname} is #{karma.to_i}```"
 
     karma
   end
@@ -30,7 +30,7 @@ class Karma
 
   def score
     karma = redis.zscore redis_key, normalized_nickname
-    say "    #{@nickname} has #{karma.to_i} points of karma"
+    say "```#{@nickname} has #{karma.to_i} points of karma```"
 
     karma
   end
@@ -39,11 +39,11 @@ class Karma
     position = redis.zrevrank redis_key, normalized_nickname
 
     if position.nil?
-      say "    #{@nickname} is not in the list!"
+      say "```#{@nickname} is not in the list!```"
       return
     end
 
-    say "    #{@nickname} is at #{ordinalize(position + 1)} position"
+    say "```#{@nickname} is at #{ordinalize(position + 1)} position```"
 
     position
   end
@@ -54,13 +54,14 @@ class Karma
     max_nickname_width = ranking.map { |x| x.first.length }.max
     max_score_width    = ranking.map { |x| x.last.to_i.to_s.length }.max
 
+    say "```"
     ranking.each do |nickname, score|
       say [
-        "   ",
         nickname.ljust(max_nickname_width, "."),
         score.to_i.to_s.rjust(max_score_width, " ")
       ].join(" ")
     end
+    say "```"
 
     ranking
   end
@@ -131,7 +132,7 @@ if %w[incr decr score rank rem].include?(cmd) && nickname && !nickname.empty?
 elsif %w[winners losers range].include?(cmd)
   Karma.new.send(cmd)
 else
-  puts "    Usage:"
+  puts "```Usage:"
   puts "      cbot karma [incr|decr|score|rank] <nickname>"
-  puts "      cbot karma [winners|losers]"
+  puts "      cbot karma [winners|losers]```"
 end
