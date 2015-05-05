@@ -5,7 +5,7 @@
 
 exit unless ARGV.length > 0 && ARGV.first.length > 0
 
-linux_patterns = /\b
+imanol_patterns = /\b
   (imanol)
 \b/xi
 
@@ -13,7 +13,7 @@ images = {
   marketing_money: 'http://i.imgur.com/rL9jWbL.gif'
 }
 
-linux_patterns.match(ARGV.first) do |match|
+imanol_patterns.match(ARGV.first) do |match|
   imanol_word = match[1].downcase.capitalize
 
   puts [
