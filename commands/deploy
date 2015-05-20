@@ -95,7 +95,7 @@ git reset --hard origin/$branch --quiet
 # ensure we're not behind master
 commitsBehind="$(git log --oneline ..origin/master | wc -l | tr -d ' ')"
 if [ "$commitsBehind" != "0" ]; then
- print ":heavy_exclamation_mark: $branch is $commitsBehind commits behind master, please merge in master. Continuing with deploy...\n\n"
+ error ":heavy_exclamation_mark: $branch is $commitsBehind commits behind master, please merge in master to continue\n\n"
 fi;
 
 # install any dependencies
