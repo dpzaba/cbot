@@ -11,7 +11,7 @@ bad_words = /
 
 if ARGV.first =~ bad_words
   require 'redis'
-  redis = Redis.new
+  redis = Redis.new(db: 7)
   last_key = 'cbot:potty_mouth:last_at'
   counter_key = 'cbot:potty_mouth:counter'
 

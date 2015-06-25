@@ -104,7 +104,7 @@ class Karma
   end
 
   def redis
-    @redis ||= Redis.new
+    @redis ||= Redis.new(db: 7)
   end
 
   def redis_key

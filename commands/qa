@@ -60,7 +60,7 @@ class QA
   end
 
   def redis
-    @redis ||= Redis.new
+    @redis ||= Redis.new(db: 7)
   end
 end
 
