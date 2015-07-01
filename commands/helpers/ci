@@ -1,0 +1,10 @@
+#!/usr/bin/env bash
+set -o errexit
+
+branch_name=$1
+
+cd ../deployables/cabify_server
+git fetch origin
+git checkout ${branch_name}
+git pull
+git push --force origin ${branch_name}:staging

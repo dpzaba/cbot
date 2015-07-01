@@ -27,11 +27,7 @@ class CI
 
     sanitize! branch_name
 
-    `cd ../deployables/cabify_server`
-    `git fetch origin`
-    `git checkout #{branch_name}`
-    `git pull`
-    `git push --force origin #{branch_name}:staging`
+    `helpers/ci #{branch_name}`
   end
 
   private
