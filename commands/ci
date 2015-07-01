@@ -1,0 +1,73 @@
+#!/usr/bin/env ruby
+
+current_flow = ENV['CURRENT_FLOW']
+if current_flow != 'C04DMJUJC'
+  puts "I won't run ci from this flow"
+  puts "Please call me from 'Product Deploys'"
+  exit
+end
+
+require "redis"
+
+class CI
+  Blocked = Class.new(StandardError)
+
+  def block
+    redis.set "cbot:ci:blocked", "true"
+  end
+  alias_method :lock, :block
+
+  def unblock
+    redis.del "cbot:ci:blocked"
+  end
+  alias_method :unlock, :unblock
+
+  def deploy(branch_name, &output)
+    raise Blocked if blocked?
+
+    sanitize! branch_name
+
+    `cd ../deployables/cabify_server`
+    `git fetch origin`
+    `git checkout #{branch_name}`
+    `git pull`
+    `git push --force origin #{branch_name}:staging`
+  end
+
+  private
+
+  def sanitize!(branch_name)
+    unless branch_name =~ /\A[-\w]+\z/
+      raise "I wouldn't do that if I were you"
+    end
+  end
+
+  def blocked?
+    redis.get("cbot:ci:blocked") == "true"
+  end
+
+  def redis
+    @redis ||= Redis.new(db: 7)
+  end
+end
+
+$stdout.sync = true
+
+branch_name = ARGV.first
+ci = CI.new
+
+case branch_name
+when "block", "unblock", "lock", "unlock"
+  ci.send(branch_name)
+  puts "CI has been #{branch_name}ed"
+when nil, ""
+  puts "    Usage:"
+  puts "      cbot ci [block|unblock]"
+  puts "      cbot ci <branch_name>"
+else
+  begin
+    ci.deploy(branch_name)
+  rescue CI::Blocked
+    puts "Cannot deploy to staging, it is blocked!"
+  end
+end
