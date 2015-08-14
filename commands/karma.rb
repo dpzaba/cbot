@@ -73,7 +73,7 @@ class Karma
   end
 
   def identify(user_id)
-    redis.hset("#{redis_key}:idbyname", @nickname, user_id)
+    redis.hset("#{redis_key}:idbyname", user_id, @nickname)
   end
 
   def fetch_nickname
