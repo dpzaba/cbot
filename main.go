@@ -42,7 +42,7 @@ func main() {
 
 // handleMessage receives an event and passes it to the MessageResponders
 func handleMessage(c *slack.Slack, e *slack.MessageEvent, responders []*MessageResponder) {
-        if e.Username == "cbot" {
+	if e.Username == "cbot" {
 		return
 	}
 
@@ -68,8 +68,8 @@ func handleMessage(c *slack.Slack, e *slack.MessageEvent, responders []*MessageR
 			}
 			helpTxt.WriteString(fmt.Sprintf("    %s %s\n", *prefix, r.Name))
 		}
-		params := slack.PostMessageParameters{ Username: *prefix }
-		if _,_,err := c.PostMessage(e.ChannelId, helpTxt.String(), params); err != nil {
+		params := slack.PostMessageParameters{Username: *prefix}
+		if _, _, err := c.PostMessage(e.Channel, helpTxt.String(), params); err != nil {
 			log.Println(err)
 		}
 		return
@@ -77,21 +77,21 @@ func handleMessage(c *slack.Slack, e *slack.MessageEvent, responders []*MessageR
 
 	directHandled := !direct
 
-	user, err := c.GetUserInfo(e.Msg.UserId)
+	user, err := c.GetUserInfo(e.Msg.User)
 
-	os.Setenv("CURRENT_FLOW", e.ChannelId)
+	os.Setenv("CURRENT_FLOW", e.Channel)
 	os.Setenv("CURRENT_USER_AVATAR", user.Profile.ImageOriginal)
 	os.Setenv("CURRENT_USER_EMAIL", user.Profile.Email)
 	os.Setenv("CURRENT_USER_NICK", user.Name)
 	os.Setenv("CURRENT_USER_NAME", user.Profile.RealName)
-	os.Setenv("CURRENT_USER_ID", string(user.Id))
+	os.Setenv("CURRENT_USER_ID", string(user.ID))
 
 	for _, responder := range responders {
 
 		caught, err := responder.Handle(direct, content, args[1:], func(response string) error {
 			// handle the output of the command by replying to the message
-			params := slack.PostMessageParameters{ Username: *prefix }
-			_,_,error := c.PostMessage(e.ChannelId, response, params) 
+			params := slack.PostMessageParameters{Username: *prefix}
+			_, _, error := c.PostMessage(e.Channel, response, params)
 			return error
 		})
 		if err != nil {
@@ -106,8 +106,8 @@ func handleMessage(c *slack.Slack, e *slack.MessageEvent, responders []*MessageR
 	if !directHandled {
 		log.Printf("Unhandled direct message: %s", content)
 		resp := "Sorry, didn't recognize that command. Try 'cbot help'"
-		params := slack.PostMessageParameters{ Username: *prefix }
-		if _,_,err := c.PostMessage(e.ChannelId, resp, params); err != nil {
+		params := slack.PostMessageParameters{Username: *prefix}
+		if _, _, err := c.PostMessage(e.Channel, resp, params); err != nil {
 			log.Println(err)
 		}
 	}
@@ -134,7 +134,7 @@ func startStream(c *slack.Slack, flows []string, responders []*MessageResponder)
 	}
 	go wsAPI.HandleIncomingEvents(chReceiver)
 	go wsAPI.Keepalive(20 * time.Second)
-	go func(wsAPI *slack.SlackWS, chSender chan slack.OutgoingMessage) {
+	go func(wsAPI *slack.WS, chSender chan slack.OutgoingMessage) {
 		for {
 			select {
 			case msg := <-chSender:
@@ -159,8 +159,8 @@ func startStream(c *slack.Slack, flows []string, responders []*MessageResponder)
 			case slack.LatencyReport:
 				a := msg.Data.(slack.LatencyReport)
 				fmt.Printf("Current latency: %v\n", a.Value)
-			case *slack.SlackWSError:
-				error := msg.Data.(*slack.SlackWSError)
+			case *slack.WSError:
+				error := msg.Data.(*slack.WSError)
 				fmt.Printf("Error: %d - %s\n", error.Code, error.Msg)
 			default:
 				fmt.Printf("Unexpected: %v\n", msg.Data)
