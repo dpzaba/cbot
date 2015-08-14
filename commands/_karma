@@ -1,9 +1,21 @@
 #!/usr/bin/env ruby
 
+require_relative 'karma'
+
 msg = ARGV.first
-msg.scan(/(@?\w+)\+\+/) do |match|
-  puts `./karma incr #{match.first}`
+msg.scan(/(\w+)\+\+/) do |match|
+  Karma.new(match.first).incr
 end
-msg.scan(/(@?\w+)--/) do |match|
-  puts `./karma decr #{match.first}`
+msg.scan(/<@(\w+)>\+\+/) do |match|
+  karma = Karma.new(match.first)
+  karma.fetch_nickname && karma.incr
 end
+msg.scan(/(\w+)--/) do |match|
+  Karma.new(match.first).decr
+end
+msg.scan(/<@(\w+)>--/) do |match|
+  karma = Karma.new(match.first)
+  karma.fetch_nickname && karma.decr
+end
+
+Karma.new(ENV['CURRENT_USER_NICK']).identify(ENV['CURRENT_USER_ID'])
